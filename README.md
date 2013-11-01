@@ -1,5 +1,5 @@
-whatsdeployed
-=============
+What's Deployed?
+================
 
 What's deployed from a Github repo on various server environments?
 
