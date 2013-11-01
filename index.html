@@ -1,0 +1,196 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>What's Deployed?</title>
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.1/css/bootstrap.min.css">
+<style>
+td a { padding-right: 5px; }
+</style>
+</head>
+<body>
+
+<form role="form">
+  <div class="form-group">
+    <label>Owner</label>
+    <input type="text" name="owner" class="form-control" id="owner" value="mozilla">
+  </div>
+  <div class="form-group">
+    <label>Repo</label>
+    <input type="text" name="repo" class="form-control" id="repo" placeholder="e.g. airmozilla">
+  </div>
+  <div class="form-group revisions">
+    <label>Revision URLs</label>
+    <input type="text" name="name[]" class="form-control" placeholder="Dev">
+    <input type="text" name="url[]" class="form-control" placeholder="e.g. https://air-dev.allizom.org/media/revision">
+  </div>
+  <p>More rows: <a href="#" class="more"><i class="glyphicon glyphicon-plus"></i></a></p>
+  <div>
+    <button class="btn btn-primary">Make URL</button>
+  </div>
+</form>
+
+<div id="table" style="display:none">
+<table class="table table-condensed table-bordered">
+ <thead>
+ <tr id="deployments">
+ </tr>
+ </thead>
+ <tbody id="commits">
+ </tbody>
+</table>
+<p id="cap" style="display:none">Stopping as soon as all environments have a particular commit in common.</p>
+</div>
+
+<script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
+<script>
+/**
+ * $.parseParams - parse query string paramaters into an object.
+ * https://gist.github.com/kares/956897
+ */
+(function($) {
+var re = /([^&=]+)=?([^&]*)/g;
+var decodeRE = /\+/g;  // Regex for replacing addition symbol with a space
+var decode = function (str) {return decodeURIComponent( str.replace(decodeRE, " ") );};
+$.parseParams = function(query) {
+    var params = {}, e;
+    while ( e = re.exec(query) ) {
+        var k = decode( e[1] ), v = decode( e[2] );
+        if (k.substring(k.length - 2) === '[]') {
+            k = k.substring(0, k.length - 2);
+            (params[k] || (params[k] = [])).push(v);
+        }
+        else params[k] = v;
+    }
+    return params;
+};
+})(jQuery);
+</script>
+
+<script>
+function start(deployments, owner, repo) {
+
+  var shas = {};
+  $('#deployments').append($('<th>').text('Master'));
+  $.each(deployments, function(i, thing) {
+    $('#deployments').append($('<th>').text(thing.name));
+    shas[thing.sha] = thing.name;
+  });
+
+  function commit_url(sha) {
+    return 'https://github.com/' + owner + '/' + repo + '/commit/' + sha;
+  }
+  function bug_url(id) {
+    return 'https://bugzilla.mozilla.org/show_bug.cgi?id=' + id;
+  }
+
+  function make_message(msg, sha) {
+      var cell = $('<td>');
+      if (msg.match(/\d{6,7}/g)) {
+        var bug_number = msg.match(/\d{6,7}/g)[0];
+	cell.append($('<a>').attr('href', bug_url(bug_number)).text(bug_number));
+	cell.append($('<span>').text(' - '));
+        //msg = msg.replace(/bug?\s*(\d\d\d\d\d+)/gi, '');
+      }
+      cell.append($('<a>').attr('href', commit_url(sha)).text(msg));
+
+      return cell;
+  }
+  //var first_sha = deployments[0].sha;
+  $('#cap').hide();
+  $.getJSON('https://api.github.com/repos/' + owner + '/' + repo + '/commits',
+            //{sha: first_sha},
+	    function(response) {
+
+    var matched = {}
+    var $commits = $('#commits');
+    var keep_going = true;
+    var cap = true;
+    $.each(response, function(i, commit) {
+      if (!keep_going && cap) return;
+
+      if (shas[commit.sha]) {
+        matched[shas[commit.sha]] = true;
+      }
+      var row = $('<tr>').append(make_message(commit.commit.message, commit.commit.sha));
+      var all = true;
+      $.each(deployments, function(i, thing) {
+	if (matched[thing.name]) {
+	  row.append($('<td>').append($('<i class="glyphicon glyphicon-ok"></i>')));
+	} else {
+          all = false;
+	  row.append($('<td>').text(''));
+	}
+      });
+      row.appendTo($commits);
+      if (all) {
+        keep_going = false;
+        $('#cap').show();
+      }
+    });
+
+  });
+
+}
+
+function init(owner, repo, deployments) {
+  var req = $.ajax({
+    url: '/shas',
+    type: 'POST',
+    data: JSON.stringify(deployments),
+    contentType: 'application/json'
+  });
+  req.then(function(response) {
+    start(response.deployments, owner, repo);
+  });
+}
+
+
+function params_to_deployment(qs) {
+  var params = $.parseParams(qs.split('?')[1]);
+  var owner, repo;
+  if (params.owner) {
+    owner = params.owner;
+    $('#owner').val(owner);
+  }
+  if (params.repo) {
+    repo = params.repo;
+    $('#repo').val(repo);
+  }
+  var names = params.name;
+  var urls = params.url;
+  var deployments = [];
+  $.each(names, function(i, name) {
+    if (i >= $('input[name="name[]"]').length) {
+      $('a.more').click();
+    }
+    $('input[name="name[]"]').eq(-1).val(name);
+    var url = urls[i];
+    $('input[name="url[]"]').eq(-1).val(url);
+    deployments.push({name: name, url: url});
+  });
+  if (owner && repo && deployments.length > 1) {
+    init(owner, repo, deployments);
+    $('form').hide();
+    $('#table').show();
+  }
+}
+
+$(function() {
+
+  $('a.more').click(function() {
+    $('.revisions')
+      .append($('<input type="text" name="name[]" class="form-control" placeholder="Name">'))
+      .append($('<input type="text" name="url[]" class="form-control" placeholder="URL to revision data">'));
+    return false;
+  });
+
+  if (location.search) {
+    params_to_deployment(location.search);
+  }
+
+});
+</script>
+
+</body>
+</html>
