@@ -106,7 +106,7 @@ function start(deployments, owner, repo) {
 
   function make_message(commit) {
     var msg = commit.commit.message;
-    var sha = commit.commit.sha;
+    var sha = commit.sha;
     var cell = $('<td>');
     if (commit.author && commit.author.avatar_url) {
       cell.append($('<a>')
@@ -135,11 +135,15 @@ function start(deployments, owner, repo) {
     var $commits = $('#commits');
     var keep_going = true;
     var cap = true;
+
     $.each(response, function(i, commit) {
       if (!keep_going && cap) return;
       $.each(shas, function(name, sha) {
         if (sha === commit.sha) {
           matched[name] = true;
+        } else if (sha === commit.sha.substring(0, 7)) {
+          matched[name] = true;
+          commit.sha = commit.sha.substring(0, 7);
         }
       });
       console.log(commit);
