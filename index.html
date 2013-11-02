@@ -88,8 +88,8 @@ function start(deployments, owner, repo) {
       var cell = $('<td>');
       if (msg.match(/\d{6,7}/g)) {
         var bug_number = msg.match(/\d{6,7}/g)[0];
-	cell.append($('<a>').attr('href', bug_url(bug_number)).text(bug_number));
-	cell.append($('<span>').text(' - '));
+        cell.append($('<a>').attr('href', bug_url(bug_number)).text(bug_number));
+        cell.append($('<span>').text(' - '));
         //msg = msg.replace(/bug?\s*(\d\d\d\d\d+)/gi, '');
       }
       cell.append($('<a>').attr('href', commit_url(sha)).text(msg));
@@ -100,7 +100,7 @@ function start(deployments, owner, repo) {
   $('#cap').hide();
   $.getJSON('https://api.github.com/repos/' + owner + '/' + repo + '/commits',
             //{sha: first_sha},
-	    function(response) {
+            function(response) {
 
     var matched = {}
     var $commits = $('#commits');
@@ -115,12 +115,12 @@ function start(deployments, owner, repo) {
       var row = $('<tr>').append(make_message(commit.commit.message, commit.commit.sha));
       var all = true;
       $.each(deployments, function(i, thing) {
-	if (matched[thing.name]) {
-	  row.append($('<td>').append($('<i class="glyphicon glyphicon-ok"></i>')));
-	} else {
+        if (matched[thing.name]) {
+          row.append($('<td>').append($('<i class="glyphicon glyphicon-ok"></i>')));
+        } else {
           all = false;
-	  row.append($('<td>').text(''));
-	}
+          row.append($('<td>').text(''));
+        }
       });
       row.appendTo($commits);
       if (all) {
