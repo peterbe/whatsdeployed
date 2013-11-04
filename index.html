@@ -74,9 +74,8 @@ function start(deployments, owner, repo) {
   $('#deployments').append($('<th>').text('Master'));
   $.each(deployments, function(i, thing) {
     $('#deployments').append($('<th>').text(thing.name));
-    shas[thing.sha] = thing.name;
+    shas[thing.name] = thing.sha;
   });
-
   function commit_url(sha) {
     return 'https://github.com/' + owner + '/' + repo + '/commit/' + sha;
   }
@@ -108,10 +107,11 @@ function start(deployments, owner, repo) {
     var cap = true;
     $.each(response, function(i, commit) {
       if (!keep_going && cap) return;
-
-      if (shas[commit.sha]) {
-        matched[shas[commit.sha]] = true;
-      }
+      $.each(shas, function(name, sha) {
+        if (sha === commit.sha) {
+	  matched[name] = true;
+	}
+      });
       var row = $('<tr>').append(make_message(commit.commit.message, commit.commit.sha));
       var all = true;
       $.each(deployments, function(i, thing) {
