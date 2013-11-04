@@ -107,7 +107,7 @@ function start(deployments, owner, repo) {
       cell.append($('<a>').attr('href', bug_url(bug_number)).text(bug_number));
       cell.append($('<span>').text(' - '));
     }
-    cell.append($('<a>').attr('href', commit_url(sha)).text(msg));
+    cell.append($('<a>').attr('href', commit.html_url).text(msg));
     return cell;
   }
   //var first_sha = deployments[0].sha;
