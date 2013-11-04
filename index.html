@@ -134,6 +134,7 @@ function start(deployments, owner, repo) {
 }
 
 function init(owner, repo, deployments) {
+  document.title = "What's deployed on " + owner + "/" + repo + "?";
   var req = $.ajax({
     url: '/shas',
     type: 'POST',
