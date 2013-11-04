@@ -27,7 +27,8 @@ class ShasView(MethodView):
                 return make_response("Doesn't look like a sha", 400)
             deployments.append({
                 'name': name,
-                'sha': content
+                'sha': content,
+                'bugs': []
             })
         response = make_response(jsonify({'deployments': deployments}))
         return response
