@@ -89,17 +89,26 @@ function start(deployments, owner, repo) {
     return 'https://bugzilla.mozilla.org/show_bug.cgi?id=' + id;
   }
 
-  function make_message(msg, sha) {
-      var cell = $('<td>');
-      if (msg.match(/\d{6,7}/g)) {
-        var bug_number = msg.match(/\d{6,7}/g)[0];
-	cell.append($('<a>').attr('href', bug_url(bug_number)).text(bug_number));
-	cell.append($('<span>').text(' - '));
-        //msg = msg.replace(/bug?\s*(\d\d\d\d\d+)/gi, '');
-      }
-      cell.append($('<a>').attr('href', commit_url(sha)).text(msg));
+  function make_message(commit) {
+    var msg = commit.commit.message;
+    var sha = commit.commit.sha;
+    var cell = $('<td>');
+    if (commit.author.avatar_url) {
+      cell.append($('<a>')
+                  .attr('href', commit.author.html_url)
+		  .append($('<img>')
+		           .attr('src', commit.author.avatar_url)
+		           .attr('width', '36')
+			   .attr('height', '36')));
+    }
 
-      return cell;
+    if (msg.match(/\d{6,7}/g)) {
+      var bug_number = msg.match(/\d{6,7}/g)[0];
+      cell.append($('<a>').attr('href', bug_url(bug_number)).text(bug_number));
+      cell.append($('<span>').text(' - '));
+    }
+    cell.append($('<a>').attr('href', commit_url(sha)).text(msg));
+    return cell;
   }
   //var first_sha = deployments[0].sha;
   $('#cap').hide();
@@ -118,7 +127,8 @@ function start(deployments, owner, repo) {
 	  matched[name] = true;
 	}
       });
-      var row = $('<tr>').append(make_message(commit.commit.message, commit.commit.sha));
+      console.log(commit);
+      var row = $('<tr>').append(make_message(commit));
       var all = true;
       $.each(deployments, function(i, thing) {
 	if (matched[thing.name]) {
