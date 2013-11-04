@@ -93,7 +93,7 @@ function start(deployments, owner, repo) {
     var msg = commit.commit.message;
     var sha = commit.commit.sha;
     var cell = $('<td>');
-    if (commit.author.avatar_url) {
+    if (commit.author && commit.author.avatar_url) {
       cell.append($('<a>')
                   .attr('href', commit.author.html_url)
 		  .append($('<img>')
