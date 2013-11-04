@@ -40,6 +40,12 @@ td a { padding-right: 5px; }
  </tbody>
 </table>
 <p id="cap" style="display:none">Stopping as soon as all environments have a particular commit in common.</p>
+
+<dl>
+  <dt>Repo</dt>
+  <dd class="repo"></dd>
+  <dt class="urls">Using these URLs</dt>
+</dl>
 </div>
 
 <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
@@ -143,6 +149,13 @@ function init(owner, repo, deployments) {
   });
   req.then(function(response) {
     start(response.deployments, owner, repo);
+    $('#table').show();
+  });
+  var repo_url = 'https://github.com/' + owner + '/' + repo;
+  $('.repo').append($('<a>').attr('href', repo_url).text(repo_url));
+  $.each(deployments, function(i, each) {
+    $('<dd>').append($('<a>').attr('href', each.url).text(each.name))
+      .insertAfter('.urls');
   });
 }
 
@@ -173,7 +186,6 @@ function params_to_deployment(qs) {
   if (owner && repo && deployments.length > 1) {
     init(owner, repo, deployments);
     $('form').hide();
-    $('#table').show();
   }
 }
 
