@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import time
 import os
 import urllib
 
@@ -21,6 +22,11 @@ class ShasView(MethodView):
         for each in request.json:
             name = each['name']
             url = each['url']
+            if '?' in url:
+                url += '&'
+            else:
+                url += '?'
+            url += 'cachescramble=%s' % time.time()
             content = urllib.urlopen(url).read().strip()
             if not len(content) == 40:
                 # doesn't appear to be a git sha
