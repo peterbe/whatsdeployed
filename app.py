@@ -28,7 +28,7 @@ class ShasView(MethodView):
                 url += '?'
             url += 'cachescramble=%s' % time.time()
             content = urllib.urlopen(url).read().strip()
-            if not len(content) == 40:
+            if not 7 <= len(content) <= 40:
                 # doesn't appear to be a git sha
                 return make_response("Doesn't look like a sha", 400)
             deployments.append({
