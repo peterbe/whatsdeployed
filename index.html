@@ -79,7 +79,9 @@ function start(deployments, owner, repo) {
   var shas = {};
   $('#deployments').append($('<th>').text('Master'));
   $.each(deployments, function(i, thing) {
-    $('#deployments').append($('<th>').text(thing.name));
+    var $th = ($('<th>').attr('id', thing.name+'-col')
+      .append($('<a>').attr('title', 'Show column in Bugzilla').text(thing.name)));
+    $('#deployments').append($th);
     shas[thing.name] = thing.sha;
   });
   function commit_url(sha) {
@@ -87,6 +89,19 @@ function start(deployments, owner, repo) {
   }
   function bug_url(id) {
     return 'https://bugzilla.mozilla.org/show_bug.cgi?id=' + id;
+  }
+  function bug_id(commit) {
+    var msg = commit.commit.message;
+    if (msg.match(/\d{6,7}/g)) return msg.match(/\d{6,7}/g)[0];
+    return false;
+  }
+
+  function link_cols() {
+    $.each(deployments, function(i, thing) {
+      var bug_query = thing.bugs.join('%2C');
+      $('#'+thing.name+'-col a')
+        .attr('href', 'https://bugzilla.mozilla.org/buglist.cgi?bug_id='+bug_query+'&bug_id_type=anyexact&bug_status=ALL');
+    });
   }
 
   function make_message(commit) {
@@ -96,14 +111,14 @@ function start(deployments, owner, repo) {
     if (commit.author && commit.author.avatar_url) {
       cell.append($('<a>')
                   .attr('href', commit.author.html_url)
-		  .append($('<img>')
-		           .attr('src', commit.author.avatar_url)
-		           .attr('width', '36')
-			   .attr('height', '36')));
+      .append($('<img>')
+               .attr('src', commit.author.avatar_url)
+               .attr('width', '36')
+         .attr('height', '36')));
     }
 
-    if (msg.match(/\d{6,7}/g)) {
-      var bug_number = msg.match(/\d{6,7}/g)[0];
+    bug_number = bug_id(commit);
+    if (bug_number) {
       cell.append($('<a>').attr('href', bug_url(bug_number)).text(bug_number));
       cell.append($('<span>').text(' - '));
     }
@@ -114,9 +129,9 @@ function start(deployments, owner, repo) {
   $('#cap').hide();
   $.getJSON('https://api.github.com/repos/' + owner + '/' + repo + '/commits',
             //{sha: first_sha},
-	    function(response) {
+      function(response) {
 
-    var matched = {}
+    var matched = {};
     var $commits = $('#commits');
     var keep_going = true;
     var cap = true;
@@ -124,29 +139,31 @@ function start(deployments, owner, repo) {
       if (!keep_going && cap) return;
       $.each(shas, function(name, sha) {
         if (sha === commit.sha) {
-	  matched[name] = true;
-	}
+          matched[name] = true;
+        }
       });
       console.log(commit);
       var row = $('<tr>').append(make_message(commit));
       var all = true;
       $.each(deployments, function(i, thing) {
-	if (matched[thing.name]) {
-	  row.append($('<td>').append($('<i class="glyphicon glyphicon-ok"></i>')));
-	} else {
+        if (matched[thing.name]) {
+          row.append($('<td>').append($('<i class="glyphicon glyphicon-ok"></i>')));
+          bug_number = bug_id(commit);
+          if (bug_number) thing.bugs.push(bug_number);
+        } else {
           all = false;
-	  row.append($('<td>').text(''));
-	}
+          row.append($('<td>').text(''));
+        }
       });
       row.appendTo($commits);
       if (all) {
+        link_cols();
         keep_going = false;
         $('#cap').show();
       }
     });
 
   });
-
 }
 
 function init(owner, repo, deployments) {
