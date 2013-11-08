@@ -10,6 +10,7 @@ td a { padding-right: 5px; }
 </head>
 <body>
 
+<div class="container">
 <form role="form">
   <div class="form-group">
     <label>Owner</label>
@@ -39,18 +40,24 @@ td a { padding-right: 5px; }
  <tbody id="commits">
  </tbody>
 </table>
-<p id="cap" style="display:none">Stopping as soon as all environments have a particular commit in common.</p>
-
-<p id="shorten" style="display:none">
-  Short URL for this configuration: <a></a>
+<p id="shorten" style="display:none;float:right">
+  Short URL: <a></a>
 </p>
 
-<dl>
+<p id="cap" style="display:none" class="text-muted">Stopping as soon as all environments have a particular commit in common.</p>
+
+
+<dl class="dl-horizontal">
   <dt>Repo</dt>
   <dd class="repo"></dd>
   <dt class="urls">Using these URLs</dt>
 </dl>
 </div>
+
+<footer style="margin-top:40px">
+  <p><a href="https://github.com/peterbe/whatsdeployed">github.com/peterbe/whatsdeployed</a></p>
+</footer>
+</div><!-- /.container -->
 
 <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
 <script>
