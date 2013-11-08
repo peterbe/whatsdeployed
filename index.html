@@ -41,6 +41,10 @@ td a { padding-right: 5px; }
 </table>
 <p id="cap" style="display:none">Stopping as soon as all environments have a particular commit in common.</p>
 
+<p id="shorten" style="display:none">
+  Short URL for this configuration: <a></a>
+</p>
+
 <dl>
   <dt>Repo</dt>
   <dd class="repo"></dd>
@@ -165,6 +169,16 @@ function start(deployments, owner, repo) {
         keep_going = false;
         $('#cap').show();
       }
+    });
+
+    var this_url = location.href;
+    console.log(this_url);
+    this_url = this_url.replace('http://localhost:5000', 'https://whatsdeployed.paas.allizom.org');
+    console.log(this_url);
+    $.post('/shortenit', {url: this_url}, function(r) {
+      console.dir(r);
+      $('#shorten a').attr('href', r.url).text(r.url);
+      $('#shorten').show();
     });
 
   });

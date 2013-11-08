@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import json
 import time
 import os
 import urllib
@@ -8,8 +9,9 @@ from flask.views import MethodView
 
 
 DEBUG = os.environ.get('DEBUG', False) in ('true', '1')
-app = Flask(__name__)
+BITLY_ACCESS_TOKEN = os.environ.get('BITLY_ACCESS_TOKEN', '')
 
+app = Flask(__name__)
 
 @app.route('/')
 def index_html():
@@ -39,7 +41,29 @@ class ShasView(MethodView):
         response = make_response(jsonify({'deployments': deployments}))
         return response
 
+class ShortenView(MethodView):
+
+    def post(self):
+        if not BITLY_ACCESS_TOKEN:
+            return make_response("BITLY_ACCESS_TOKEN not set up", 500)
+
+        url = request.form['url']
+        bitly_base_url = 'https://api-ssl.bitly.com/v3/shorten'
+        qs = urllib.urlencode({
+            'access_token': BITLY_ACCESS_TOKEN,
+            'longUrl': url
+        })
+        bitly_url = '%s?%s' % (bitly_base_url, qs)
+        response = urllib.urlopen(bitly_url).read()
+        result = json.loads(response)
+        if result.get('status_code') == 500:
+            raise ValueError(result.get('status_txt'))
+        url = result['data']['url']
+        return make_response(jsonify({'url': url}))
+
+
 app.add_url_rule('/shas', view_func=ShasView.as_view('shas'))
+app.add_url_rule('/shortenit', view_func=ShortenView.as_view('shortenit'))
 
 if __name__ == '__main__':
     app.debug = DEBUG
