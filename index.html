@@ -5,6 +5,11 @@
 <title>What's Deployed?</title>
 <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.1/css/bootstrap.min.css">
 <style>
+#error {
+    display: none;
+    padding: 100px;
+    color: red;
+}
 td a { padding-right: 5px; }
 #cloak {
    padding: 100px;
@@ -19,12 +24,17 @@ a.resolved { text-decoration: line-through !important; }
 
 <div class="container">
 
-<div id="cloak">
+<div id="error">
+   <h3>Error :(</h3>
+   <p>
 
+   </p>
+</div>
+
+<div id="cloak">
    <p>
    Loading loading loading...<span class="dots"></span>
    </p>
-
 </div>
 
 <form role="form" style="display:none">
@@ -221,8 +231,16 @@ function init(owner, repo, deployments, callback) {
     contentType: 'application/json'
   });
   req.then(function(response) {
-    start(response.deployments, owner, repo);
+    if (response.error) {
+      $('#error p').text(response.error);
+      $('#error').show();
+    } else {
+      start(response.deployments, owner, repo);
+    }
     if (callback) callback();
+  });
+  req.fail(function(jqxhr, status, error) {
+    console.warn("Unable to convert deployments to sha", error);
   });
   var repo_url = 'https://github.com/' + owner + '/' + repo;
   $('.repo').append($('<a>').attr('href', repo_url).text(repo_url));

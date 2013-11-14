@@ -32,7 +32,11 @@ class ShasView(MethodView):
             content = urllib.urlopen(url).read().strip()
             if not 7 <= len(content) <= 40:
                 # doesn't appear to be a git sha
-                return make_response("Doesn't look like a sha", 400)
+                error = (
+                    "Doesn't look like a sha\n (%s) on %s" %
+                    (content, each['url'])
+                )
+                return make_response(jsonify({'error': error,}))
             deployments.append({
                 'name': name,
                 'sha': content,
