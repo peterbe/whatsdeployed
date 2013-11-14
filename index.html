@@ -6,12 +6,28 @@
 <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.1/css/bootstrap.min.css">
 <style>
 td a { padding-right: 5px; }
+#cloak {
+   padding: 100px;
+   height: 100%;
+   width: 100%;
+}
+#cloak p { text-align:center; }
+a.resolved { text-decoration: line-through !important; }
 </style>
 </head>
 <body>
 
 <div class="container">
-<form role="form">
+
+<div id="cloak">
+
+   <p>
+   Loading loading loading...<span class="dots"></span>
+   </p>
+
+</div>
+
+<form role="form" style="display:none">
   <div class="form-group">
     <label>Owner</label>
     <input type="text" name="owner" class="form-control" id="owner" value="mozilla">
@@ -130,7 +146,12 @@ function start(deployments, owner, repo) {
 
     bug_number = bug_id(commit);
     if (bug_number) {
-      cell.append($('<a>').attr('href', bug_url(bug_number)).text(bug_number));
+      cell.append($('<a>')
+                   .attr('href', bug_url(bug_number))
+		   .data('id', bug_number)
+                   .attr('id', 'bug-' + bug_number)
+		   .addClass('bugzilla')
+		   .text(bug_number));
       cell.append($('<span>').text(' - '));
     }
     cell.append($('<a>').attr('href', commit.html_url).text(msg));
@@ -173,21 +194,25 @@ function start(deployments, owner, repo) {
       row.appendTo($commits);
       if (all) {
         link_cols();
+	fetch_bugzilla_metadata();
         keep_going = false;
         $('#cap').show();
       }
     });
 
-    $.post('/shortenit', {url: location.href}, function(r) {
-      console.dir(r);
+    var req = $.post('/shortenit', {url: location.href});
+    req.then(function(r) {
       $('#shorten a').attr('href', r.url).text(r.url);
       $('#shorten').show();
+    });
+    req.fail(function(jqXHR, textStatus, errorThrown) {
+      console.warn('URL shortening service failed', errorThrown);
     });
 
   });
 }
 
-function init(owner, repo, deployments) {
+function init(owner, repo, deployments, callback) {
   document.title = "What's deployed on " + owner + "/" + repo + "?";
   var req = $.ajax({
     url: '/shas',
@@ -197,7 +222,7 @@ function init(owner, repo, deployments) {
   });
   req.then(function(response) {
     start(response.deployments, owner, repo);
-    $('#table').show();
+    if (callback) callback();
   });
   var repo_url = 'https://github.com/' + owner + '/' + repo;
   $('.repo').append($('<a>').attr('href', repo_url).text(repo_url));
@@ -208,7 +233,7 @@ function init(owner, repo, deployments) {
 }
 
 
-function params_to_deployment(qs) {
+function params_to_deployment(qs, callback) {
   var params = $.parseParams(qs.split('?')[1]);
   var owner, repo;
   if (params.owner) {
@@ -220,7 +245,13 @@ function params_to_deployment(qs) {
     $('#repo').val(repo);
   }
   var names = params.name;
+  if (!names) {
+    throw "No parameter called 'names'";
+  }
   var urls = params.url;
+  if (!urls) {
+    throw "No parameter called 'urls'";
+  }
   var deployments = [];
   $.each(names, function(i, name) {
     if (i >= $('input[name="name[]"]').length) {
@@ -232,9 +263,39 @@ function params_to_deployment(qs) {
     deployments.push({name: name, url: url});
   });
   if (owner && repo && deployments.length > 1) {
-    init(owner, repo, deployments);
+    init(owner, repo, deployments, callback);
     $('form').hide();
+  } else if (callback) {
+    callback();
   }
+}
+
+function fetch_bugzilla_metadata() {
+  var ids = [];
+  $('a.bugzilla').each(function() {
+    ids.push($(this).data('id'));
+  });
+  var data = {id: ids.join(','), include_fields: 'status,id,resolution'};
+  var URL = 'https://api-dev.bugzilla.mozilla.org/1.3';
+  var req = $.ajax({
+    url: 'https://api-dev.bugzilla.mozilla.org/1.3/bug',
+    data: data,
+    contentType: 'application/json',
+    accepts: 'application/json'
+  });
+  req.done(function(response) {
+      if (response.bugs) {
+        $.each(response.bugs, function(i, bug) {
+          var $link = $('#bug-' + bug.id);
+          if ($link.length) {
+            $link.attr('title', bug.status + ' ' + bug.resolution);
+            if (bug.status === 'RESOLVED') {
+              $link.addClass('resolved');
+            }
+          }
+        });
+      }
+  });
 }
 
 $(function() {
@@ -246,8 +307,25 @@ $(function() {
     return false;
   });
 
+  var dotter = setInterval(function() {
+      var c = $('#cloak .dots');
+      c.text(c.text() + '.');
+      if (c.text().match(/\./g).length > 10) {
+        clearInterval(dotter);
+        $('#cloak p').text(" F' it! I give up! This is taking too long.");
+      }
+  }, 1000);
+
   if (location.search) {
-    params_to_deployment(location.search);
+    params_to_deployment(location.search, function() {
+      $('#cloak').hide();
+      $('#table').fadeIn(500);
+      clearInterval(dotter);
+    });
+  } else {
+    $('form').fadeIn(500);
+    $('#cloak').hide();
+    clearInterval(dotter);
   }
 
 });
