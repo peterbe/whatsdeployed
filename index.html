@@ -307,7 +307,7 @@ function fetch_bugzilla_metadata() {
           var $link = $('#bug-' + bug.id);
           if ($link.length) {
             $link.attr('title', bug.status + ' ' + bug.resolution);
-            if (bug.status === 'RESOLVED') {
+            if (bug.status === 'RESOLVED' || bug.status === 'VERIFIED') {
               $link.addClass('resolved');
             }
           }
