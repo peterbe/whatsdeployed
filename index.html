@@ -159,7 +159,7 @@ function start(deployments, owner, repo) {
       cell.append($('<a>')
                    .attr('href', bug_url(bug_number))
 		   .data('id', bug_number)
-                   .attr('id', 'bug-' + bug_number)
+                   .addClass('bug-' + bug_number)
 		   .addClass('bugzilla')
 		   .text(bug_number));
       cell.append($('<span>').text(' - '));
@@ -304,12 +304,10 @@ function fetch_bugzilla_metadata() {
   req.done(function(response) {
       if (response.bugs) {
         $.each(response.bugs, function(i, bug) {
-          var $link = $('#bug-' + bug.id);
-          if ($link.length) {
-            $link.attr('title', bug.status + ' ' + bug.resolution);
-            if (bug.status === 'RESOLVED' || bug.status === 'VERIFIED') {
-              $link.addClass('resolved');
-            }
+          var $links = $('a.bug-' + bug.id);
+          $links.attr('title', bug.status + ' ' + bug.resolution);
+          if (bug.status === 'RESOLVED' || bug.status === 'VERIFIED') {
+            $links.addClass('resolved');
           }
         });
       }
