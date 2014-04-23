@@ -13,9 +13,11 @@ BITLY_ACCESS_TOKEN = os.environ.get('BITLY_ACCESS_TOKEN', '')
 
 app = Flask(__name__)
 
+
 @app.route('/')
 def index_html():
     return send_file('index.html')
+
 
 class ShasView(MethodView):
 
@@ -45,6 +47,7 @@ class ShasView(MethodView):
         response = make_response(jsonify({'deployments': deployments}))
         return response
 
+
 class ShortenView(MethodView):
 
     def post(self):
@@ -68,6 +71,7 @@ class ShortenView(MethodView):
 
 app.add_url_rule('/shas', view_func=ShasView.as_view('shas'))
 app.add_url_rule('/shortenit', view_func=ShortenView.as_view('shortenit'))
+
 
 if __name__ == '__main__':
     app.debug = DEBUG
