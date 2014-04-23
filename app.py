@@ -4,7 +4,7 @@ import time
 import os
 import urllib
 
-from flask import Flask, request, make_response, abort, jsonify, send_file
+from flask import Flask, request, make_response, jsonify, send_file
 from flask.views import MethodView
 
 
@@ -38,7 +38,7 @@ class ShasView(MethodView):
                     "Doesn't look like a sha\n (%s) on %s" %
                     (content, each['url'])
                 )
-                return make_response(jsonify({'error': error,}))
+                return make_response(jsonify({'error': error}))
             deployments.append({
                 'name': name,
                 'sha': content,
