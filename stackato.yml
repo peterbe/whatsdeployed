@@ -1,4 +1,6 @@
 name: whatsdeployed
+url:
+    - whatsdeployed.paas.allizom.org
 framework:
     type: python
     runtime: python27
