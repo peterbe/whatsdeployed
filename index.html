@@ -143,6 +143,13 @@ function start(deployments, owner, repo) {
 
   function make_message(commit) {
     var msg = commit.commit.message;
+    var msg_split = msg.split(/\n\n+/);
+    var msg_first;
+    if (msg_split.length === 1) {
+      msg_first = msg;
+    } else {
+      msg_first = msg_split[0];
+    }
     var sha = commit.sha;
     var cell = $('<td>');
     if (commit.author && commit.author.avatar_url) {
@@ -157,14 +164,18 @@ function start(deployments, owner, repo) {
     bug_number = bug_id(commit);
     if (bug_number) {
       cell.append($('<a>')
-                   .attr('href', bug_url(bug_number))
-		   .data('id', bug_number)
-                   .addClass('bug-' + bug_number)
-		   .addClass('bugzilla')
-		   .text(bug_number));
-      cell.append($('<span>').text(' - '));
+                  .attr('href', bug_url(bug_number))
+                  .data('id', bug_number)
+                  .addClass('bug-' + bug_number)
+                  .addClass('bugzilla')
+                  .text(bug_number));
+      cell.append($('<span>')
+                  .text(' - '));
     }
-    cell.append($('<a>').attr('href', commit.html_url).text(msg));
+    cell.append($('<a>')
+                .attr('href', commit.html_url)
+                .attr('title', msg)
+                .text(msg_first));
     return cell;
   }
   //var first_sha = deployments[0].sha;
@@ -204,7 +215,7 @@ function start(deployments, owner, repo) {
       row.appendTo($commits);
       if (all) {
         link_cols();
-	fetch_bugzilla_metadata();
+        fetch_bugzilla_metadata();
         keep_going = false;
         $('#cap').show();
       }

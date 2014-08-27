@@ -8,7 +8,7 @@ from flask import Flask, request, make_response, jsonify, send_file
 from flask.views import MethodView
 
 
-DEBUG = os.environ.get('DEBUG', False) in ('true', '1')
+DEBUG = os.environ.get('DEBUG', False) in ('true', '1', 'on')
 BITLY_ACCESS_TOKEN = os.environ.get('BITLY_ACCESS_TOKEN', '')
 
 app = Flask(__name__)
