@@ -5,7 +5,4 @@ framework:
 mem: 128M
 instances: 1
 processes:
-    # Does anybody know which one is best to use?
-#    web: $STACKATO_UWSGI --wsgi-file app.py --callable app --processes 1 --threads 4
     web: ./app.py
-#    web: gunicorn -b 0.0.0.0:$PORT app:app
