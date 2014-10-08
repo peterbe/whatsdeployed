@@ -180,7 +180,7 @@ function start(deployments, owner, repo) {
   }
   //var first_sha = deployments[0].sha;
   $('#cap').hide();
-  $.getJSON('https://api.github.com/repos/' + owner + '/' + repo + '/commits',
+  $.getJSON('https://api.github.com/repos/' + owner + '/' + repo + '/commits?per_page=60',
             //{sha: first_sha},
       function(response) {
 
@@ -199,7 +199,7 @@ function start(deployments, owner, repo) {
           commit.sha = commit.sha.substring(0, 7);
         }
       });
-      console.log(commit);
+      // console.log(commit);
       var row = $('<tr>').append(make_message(commit));
       var all = true;
       $.each(deployments, function(i, thing) {
