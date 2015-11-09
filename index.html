@@ -223,7 +223,9 @@ function start(deployments, owner, repo) {
 
     var req = $.post('/shortenit', {url: location.href});
     req.then(function(r) {
-      $('#shorten a').attr('href', r.url).text(r.url);
+      $('#shorten a').attr('href', r.url).text(
+        location.protocol + '//' + location.host + r.url
+      );
       $('#shorten').show();
     });
     req.fail(function(jqXHR, textStatus, errorThrown) {
