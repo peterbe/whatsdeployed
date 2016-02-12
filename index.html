@@ -187,7 +187,8 @@ function start(deployments, owner, repo) {
   }
   //var first_sha = deployments[0].sha;
   $('#cap').hide();
-  $.getJSON('https://api.github.com/repos/' + owner + '/' + repo + '/commits?per_page=60',
+  var commitsURL = 'https://api.github.com/repos/' + owner + '/' + repo + '/commits?per_page=60';
+  $.getJSON(commitsURL,
             //{sha: first_sha},
       function(response) {
 
@@ -222,7 +223,7 @@ function start(deployments, owner, repo) {
       row.appendTo($commits);
       if (all) {
         link_cols();
-        fetch_bugzilla_metadata();
+        fetchBugzillaMetadata();
         keep_going = false;
         $('#cap').show();
       }
@@ -239,10 +240,23 @@ function start(deployments, owner, repo) {
       console.warn('URL shortening service failed', errorThrown);
     });
 
+  })
+  .fail(function() {
+    console.error.apply(console, arguments);
+    showGeneralError(
+      'Unable to download commits for <code>' + commitsURL + '</code>'
+    );
   });
 }
 
+function showGeneralError(html) {
+  $('#error p').html(html);
+  $('#table').hide();
+  $('#error').show();
+}
+
 function init(owner, repo, deployments, callback) {
+  console.log(owner, repo, deployments);
   document.title = "What's deployed on " + owner + "/" + repo + "?";
   var req = $.ajax({
     url: '/shas',
@@ -252,8 +266,7 @@ function init(owner, repo, deployments, callback) {
   });
   req.then(function(response) {
     if (response.error) {
-      $('#error p').text(response.error);
-      $('#error').show();
+      showGeneralError(response.error);
     } else {
       start(response.deployments, owner, repo);
     }
@@ -271,7 +284,7 @@ function init(owner, repo, deployments, callback) {
 }
 
 
-function params_to_deployment(qs, callback) {
+function paramsToDeployment(qs, callback) {
   var params = $.parseParams(qs.split('?')[1]);
   var owner, repo;
   if (params.owner) {
@@ -300,7 +313,7 @@ function params_to_deployment(qs, callback) {
     $('input[name="url[]"]').eq(-1).val(url);
     deployments.push({name: name, url: url});
   });
-  if (owner && repo && deployments.length > 1) {
+  if (owner && repo && deployments.length > 0) {
     init(owner, repo, deployments, callback);
     $('form').hide();
   } else if (callback) {
@@ -308,7 +321,7 @@ function params_to_deployment(qs, callback) {
   }
 }
 
-function fetch_bugzilla_metadata() {
+function fetchBugzillaMetadata() {
   var ids = [];
   $('a.bugzilla').each(function() {
     ids.push($(this).data('id'));
@@ -353,7 +366,7 @@ $(function() {
   }, 1000);
 
   if (location.search) {
-    params_to_deployment(location.search, function() {
+    paramsToDeployment(location.search, function() {
       $('#cloak').hide();
       $('#table').fadeIn(500);
       clearInterval(dotter);
