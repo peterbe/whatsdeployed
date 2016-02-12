@@ -142,13 +142,15 @@ function start(deployments, owner, repo) {
 
   function link_cols() {
     $.each(deployments, function(i, thing) {
-      var bug_query = thing.bugs.join('%2C');
-      $('#'+thing.name+'-col a')
-        .attr('href', 'https://bugzilla.mozilla.org/buglist.cgi?bug_id='+bug_query+'&bug_id_type=anyexact&bug_status=ALL');
+      if (thing.bugs.length) {
+        var bug_query = thing.bugs.join('%2C');
+        $('#'+thing.name+'-col a')
+          .attr('href', 'https://bugzilla.mozilla.org/buglist.cgi?bug_id='+bug_query+'&bug_id_type=anyexact&bug_status=ALL');
+      }
     });
   }
 
-  function make_message(commit) {
+  function makeMessage(commit) {
     var msg = commit.commit.message;
     var msg_split = msg.split(/\n\n+/);
     var msg_first;
@@ -207,8 +209,7 @@ function start(deployments, owner, repo) {
           commit.sha = commit.sha.substring(0, 7);
         }
       });
-      // console.log(commit);
-      var row = $('<tr>').append(make_message(commit));
+      var row = $('<tr>').append(makeMessage(commit));
       var all = true;
       $.each(deployments, function(i, thing) {
         if (matched[thing.name]) {
@@ -256,7 +257,6 @@ function showGeneralError(html) {
 }
 
 function init(owner, repo, deployments, callback) {
-  console.log(owner, repo, deployments);
   document.title = "What's deployed on " + owner + "/" + repo + "?";
   var req = $.ajax({
     url: '/shas',
@@ -326,6 +326,7 @@ function fetchBugzillaMetadata() {
   $('a.bugzilla').each(function() {
     ids.push($(this).data('id'));
   });
+  if (!ids.length) return;
   var data = {id: ids.join(','), include_fields: 'status,id,resolution'};
   var URL = 'https://api-dev.bugzilla.mozilla.org/1.3';
   var req = $.ajax({
