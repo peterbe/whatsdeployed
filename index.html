@@ -245,13 +245,13 @@ function start(deployments, owner, repo) {
   .fail(function() {
     console.error.apply(console, arguments);
     showGeneralError(
-      'Unable to download commits for <code>' + commitsURL + '</code>'
+      'Unable to download commits for "' + commitsURL + '"'
     );
   });
 }
 
 function showGeneralError(html) {
-  $('#error p').html(html);
+  $('#error p').text(html);
   $('#table').hide();
   $('#error').show();
 }
