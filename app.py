@@ -7,6 +7,7 @@ import urlparse
 import cgi
 import random
 
+import requests
 from flask import (
     Flask,
     request,
@@ -21,6 +22,10 @@ from flask.ext.sqlalchemy import SQLAlchemy
 
 
 DEBUG = os.environ.get('DEBUG', False) in ('true', '1', 'on')
+
+DEFAULT_REQUEST_HEADERS = {
+    'User-Agent': 'whatsdeployed',
+}
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
@@ -61,12 +66,7 @@ class ShasView(MethodView):
         for each in request.json:
             name = each['name']
             url = each['url']
-            if '?' in url:
-                url += '&'
-            else:
-                url += '?'
-            url += 'cachescramble=%s' % time.time()
-            content = urllib.urlopen(url).read().strip()
+            content = self.fetch_content(url)
             if not 7 <= len(content) <= 40:
                 # doesn't appear to be a git sha
                 error = (
@@ -81,6 +81,20 @@ class ShasView(MethodView):
             })
         response = make_response(jsonify({'deployments': deployments}))
         return response
+
+    def fetch_content(self, url):
+        if '?' in url:
+            url += '&'
+        else:
+            url += '?'
+        url += 'cachescramble=%s' % time.time()
+        r = requests.get(
+            url,
+            headers=DEFAULT_REQUEST_HEADERS,
+            timeout=30,
+        )
+        r.raise_for_status()
+        return r.text.strip()
 
 
 class ShortenView(MethodView):
