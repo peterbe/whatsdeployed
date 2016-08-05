@@ -260,25 +260,26 @@ $(function() {
     return false;
   });
 
-  var dotter = setInterval(function() {
-      var c = $('#cloak .dots');
-      c.text(c.text() + '.');
-      if (c.text().match(/\./g).length > 10) {
-        clearInterval(dotter);
-        $('#cloak p').text(" F' it! I give up! This is taking too long.");
-      }
-  }, 1000);
 
   if (location.search) {
+    var dotter = setInterval(function() {
+        var c = $('#cloak .dots');
+        c.text(c.text() + '.');
+        if (c.text().match(/\./g).length > 20) {
+          clearInterval(dotter);
+          $('#cloak p').text(" F' it! I give up! This is taking too long.");
+        }
+    }, 500);
+
     paramsToDeployment(location.search, function() {
+      $('h2').text($('h2').text().replace('?', ''));
       $('#cloak').hide();
       $('#table').fadeIn(500);
       clearInterval(dotter);
     });
   } else {
-    $('form').fadeIn(500);
     $('#cloak').hide();
-    clearInterval(dotter);
+    $('form').fadeIn(500);
   }
 
 });

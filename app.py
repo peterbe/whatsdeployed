@@ -108,7 +108,6 @@ class ShortenView(MethodView):
         revisions = []
         for i, name in enumerate(parsed['name[]']):
             revisions.append((name, parsed['url[]'][i]))
-        revisions.sort()
         # Does it already exist??
         shortlink = Shortlink.query.filter_by(
             owner=owner,
