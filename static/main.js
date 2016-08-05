@@ -173,6 +173,12 @@ function init(owner, repo, deployments, callback) {
     } else {
       start(response.deployments, owner, repo);
     }
+    var titletag = document.head.querySelector(
+      'meta[name="apple-mobile-web-app-title"]'
+    );
+    // Make it really short in case someone saves it to their Home screen
+    // on an iPhone
+    titletag.content = 'WD ' + repo;
     if (callback) callback();
   });
   req.fail(function(jqxhr, status, error) {
