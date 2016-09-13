@@ -27,6 +27,15 @@ DEFAULT_REQUEST_HEADERS = {
     'User-Agent': 'whatsdeployed',
 }
 
+GITHUB_REQUEST_HEADERS = {
+    'User-Agent': 'whatsdeployed (https://whatsdeployed.io)',
+}
+GITHUB_AUTH_TOKEN = os.environ.get('GITHUB_AUTH_TOKEN')
+if GITHUB_AUTH_TOKEN:
+    GITHUB_REQUEST_HEADERS['Authorization'] = (
+        'token {}'.format(GITHUB_AUTH_TOKEN)
+    )
+
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
     'SQLALCHEMY_DATABASE_URI',
@@ -97,6 +106,117 @@ class ShasView(MethodView):
         return r.text.strip()
 
 
+class CulpritsView(MethodView):
+
+    def post(self):
+        groups = []
+        owner = request.json['owner']
+        repo = request.json['repo']
+        deployments = request.json['deployments']
+        base_url = 'https://api.github.com/repos/{owner}/{repo}'.format(
+            repo=request.json['repo'],
+            owner=request.json['owner']
+        )
+        pulls_url = base_url + (
+            '/pulls?sort=created&state=closed&direction=desc'
+        )
+        _looked_up = []
+        for deployment in deployments:
+            name = deployment['name']
+            sha = deployment['sha']
+            if sha in _looked_up:
+                # If you have, for example Stage on the exact same
+                # sha as Prod, then there's no going looking it up
+                # twice.
+                continue
+
+            users = []
+            links = []
+            _users = []
+            r = requests.get(
+                pulls_url,
+                headers=DEFAULT_REQUEST_HEADERS,
+                timeout=30,
+            )
+            assert r.status_code == 200, r.status_code
+            for pr in r.json():
+                if pr['merge_commit_sha'] == sha:
+                    links.append(pr['_links']['html']['href'])
+                    author = pr['user']
+                    users.append((
+                        'Author',
+                        author,
+                    ))
+                    _users.append(author)
+                    committer = pr.get('committer')
+                    if committer and committer != author:
+                        users.append((
+                            'Committer',
+                            committer
+                        ))
+                        _users.append(committer)
+                    # let's also dig into what other people participated
+                    for assignee in pr['assignees']:
+                        if assignee not in _users:
+                            users.append((
+                                'Assignee',
+                                assignee
+                            ))
+                            _users.append(assignee)
+                    # Other people who commented on the PR
+                    issues_url = base_url + (
+                        '/issues/{number}/comments'.format(
+                            number=pr['number']
+                        )
+                    )
+                    r = requests.get(
+                        issues_url,
+                        headers=DEFAULT_REQUEST_HEADERS,
+                        timeout=30,
+                    )
+                    assert r.status_code == 200, r.status_code
+                    for comment in r.json():
+                        try:
+                            user = comment['user']
+                            if user not in _users:
+                                users.append((
+                                    'Commenter',
+                                    user
+                                ))
+                                _users.append(user)
+                        except TypeError:
+                            print("COMMENT")
+                            pprint(comment)
+                    break
+
+            # it didn't come from a PR :(
+            commits_url = base_url + (
+                '/commits/{sha}'.format(sha=sha)
+            )
+            r = requests.get(
+                commits_url,
+                headers=DEFAULT_REQUEST_HEADERS,
+                timeout=30,
+            )
+            assert r.status_code == 200, r.status_code
+            commit = r.json()
+            author = commit['author']
+            users.append((
+                'Committer',
+                author
+            ))
+            _users.append(author)
+            groups.append({
+                'name': name,
+                'users': users,
+                'links': links,
+            })
+            _looked_up.append(sha)
+
+        response = make_response(jsonify({'culprits': groups}))
+        return response
+
+
 class ShortenView(MethodView):
 
     def post(self):
@@ -161,6 +281,7 @@ class ShortlinkRedirectView(MethodView):
 
 
 app.add_url_rule('/shas', view_func=ShasView.as_view('shas'))
+app.add_url_rule('/culprits', view_func=CulpritsView.as_view('culprits'))
 app.add_url_rule('/shortenit', view_func=ShortenView.as_view('shortenit'))
 app.add_url_rule(
     '/s-<string:link>', view_func=ShortlinkRedirectView.as_view('shortlink')

@@ -21,7 +21,7 @@ $.parseParams = function(query) {
 })(jQuery);
 
 
-function start(deployments, owner, repo) {
+function start(deployments, owner, repo, callback) {
 
   var shas = {};
   $('#deployments').append($('<th>').text('Master'));
@@ -128,6 +128,7 @@ function start(deployments, owner, repo) {
       if (all) {
         link_cols();
         fetchBugzillaMetadata();
+        culprits(owner, repo, deployments);
         keep_going = false;
         $('#cap').show();
       }
@@ -230,6 +231,71 @@ function paramsToDeployment(qs, callback) {
   }
 }
 
+function culprits(owner, repo, deployments) {
+  $.ajax({
+    url: '/culprits',
+    type: 'POST',
+    data: JSON.stringify({
+      owner: owner,
+      repo: repo,
+      deployments: deployments,
+    }),
+    contentType: 'application/json'
+  })
+  .then(function(response) {
+    var container = $('#culprits');
+    $.each(response.culprits, function(i, group) {
+      $('<h4>').append(
+        $('<span>On </span>').addClass('on-prefix')
+      ).append(
+        $('<span>').text(group.name)
+      ).appendTo(container);
+      var users = $('<div>').addClass('users');
+      $.each(group.users, function(j, userinfo) {
+        var user_container = $('<div>').addClass('media');
+        $('<div>').addClass('media-left').append(
+          $('<a>')
+          .attr('href', userinfo[1].html_url)
+          .attr('target', '_blank')
+          .attr('rel', 'noopener')
+          .attr('title', userinfo[1].login)
+          .append(
+            $('<img>')
+            .addClass('media-object')
+            .attr('width', '36')
+            .attr('height', '36')
+            .attr('src', userinfo[1].avatar_url)
+          )
+        ).appendTo(user_container);
+        $('<div>').addClass('media-body')
+        .append(
+          $('<h5>').addClass('media-heading').text(userinfo[1].login)
+        ).append(
+          $('<p>').text(userinfo[0])
+        )
+        .appendTo(user_container);
+        user_container.appendTo(container);
+      });
+      users.appendTo(container);
+      if (group.links.length) {
+        $('<h5>').text('Links').appendTo(container);
+      }
+      $.each(group.links, function(i, link) {
+        $('<a>')
+        .attr('target', '_blank')
+        .attr('rel', 'noopener')
+        .attr('href', link)
+        .text(link)
+        .appendTo(container);
+      });
+    });
+    container.show();
+  })
+  .fail(function(jqxhr, status, error) {
+    console.warn("Unable to convert deployments to culprits", error);
+  });
+}
+
 function fetchBugzillaMetadata() {
   var ids = [];
   $('a.bugzilla').each(function() {
@@ -256,6 +322,7 @@ function fetchBugzillaMetadata() {
       }
   });
 }
+
 
 $(function() {
 
