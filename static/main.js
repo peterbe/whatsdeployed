@@ -303,9 +303,8 @@ function fetchBugzillaMetadata() {
   });
   if (!ids.length) return;
   var data = {id: ids.join(','), include_fields: 'status,id,resolution'};
-  var URL = 'https://api-dev.bugzilla.mozilla.org/1.3';
   var req = $.ajax({
-    url: 'https://api-dev.bugzilla.mozilla.org/1.3/bug',
+    url: 'https://bugzilla.mozilla.org/rest/bug',
     data: data,
     contentType: 'application/json',
     accepts: 'application/json'
