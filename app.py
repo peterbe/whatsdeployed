@@ -6,6 +6,7 @@ import urllib
 import urlparse
 import cgi
 import random
+from collections import defaultdict
 
 import requests
 from flask import (
@@ -110,8 +111,6 @@ class CulpritsView(MethodView):
 
     def post(self):
         groups = []
-        owner = request.json['owner']
-        repo = request.json['repo']
         deployments = request.json['deployments']
         base_url = 'https://api.github.com/repos/{owner}/{repo}'.format(
             repo=request.json['repo'],
@@ -132,7 +131,6 @@ class CulpritsView(MethodView):
 
             users = []
             links = []
-            _users = []
             r = requests.get(
                 pulls_url,
                 headers=DEFAULT_REQUEST_HEADERS,
@@ -147,22 +145,18 @@ class CulpritsView(MethodView):
                         'Author',
                         author,
                     ))
-                    _users.append(author)
                     committer = pr.get('committer')
                     if committer and committer != author:
                         users.append((
                             'Committer',
                             committer
                         ))
-                        _users.append(committer)
                     # let's also dig into what other people participated
                     for assignee in pr['assignees']:
-                        if assignee not in _users:
-                            users.append((
-                                'Assignee',
-                                assignee
-                            ))
-                            _users.append(assignee)
+                        users.append((
+                            'Assignee',
+                            assignee
+                        ))
                     # Other people who commented on the PR
                     issues_url = base_url + (
                         '/issues/{number}/comments'.format(
@@ -178,18 +172,15 @@ class CulpritsView(MethodView):
                     for comment in r.json():
                         try:
                             user = comment['user']
-                            if user not in _users:
-                                users.append((
-                                    'Commenter',
-                                    user
-                                ))
-                                _users.append(user)
+                            users.append((
+                                'Commenter',
+                                user
+                            ))
                         except TypeError:
-                            print("COMMENT")
-                            pprint(comment)
+                            print "COMMENT"
+                            print comment
                     break
 
-            # it didn't come from a PR :(
             commits_url = base_url + (
                 '/commits/{sha}'.format(sha=sha)
             )
@@ -200,15 +191,45 @@ class CulpritsView(MethodView):
             )
             assert r.status_code == 200, r.status_code
             commit = r.json()
+
             author = commit['author']
-            users.append((
-                'Committer',
-                author
-            ))
-            _users.append(author)
+            if ('Author', author) not in users:
+                users.append((
+                    'Author',
+                    author
+                ))
+            committer = commit.get('committer')
+            if committer:
+                if committer['login'] == 'web-flow':
+                    # Then the author pressed the green button and let
+                    # GitHub merge it.
+                    # Change the label of the author to also be the committer
+                    users.append(('Committer', author))
+                elif committer != author:
+                    users.append((
+                        'Committer',
+                        committer
+                    ))
+            # Now merge the labels for user
+            labels = defaultdict(list)
+            for label, user in users:
+                if label not in labels[user['login']]:
+                    labels[user['login']].append(label)
+            labels_map = {}
+            for login, labels in labels.items():
+                labels_map[login] = ' & '.join(labels)
+            unique_users = []
+            _logins = set()
+            for _, user in users:
+                if user['login'] not in _logins:
+                    _logins.add(user['login'])
+                    unique_users.append((
+                        labels_map[user['login']],
+                        user
+                    ))
             groups.append({
                 'name': name,
-                'users': users,
+                'users': unique_users,
                 'links': links,
             })
             _looked_up.append(sha)
