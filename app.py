@@ -3,9 +3,9 @@ import json
 import time
 import os
 import urllib
-import urlparse
 import cgi
 import random
+from urllib.parse import urlparse
 from collections import defaultdict
 
 import requests
@@ -19,7 +19,7 @@ from flask import (
     redirect,
 )
 from flask.views import MethodView
-from flask.ext.sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy
 
 
 DEBUG = os.environ.get('DEBUG', False) in ('true', '1', 'on')
@@ -177,8 +177,8 @@ class CulpritsView(MethodView):
                                 user
                             ))
                         except TypeError:
-                            print "COMMENT"
-                            print comment
+                            print("COMMENT")
+                            print(comment)
                     break
 
             commits_url = base_url + (
@@ -242,7 +242,7 @@ class ShortenView(MethodView):
 
     def post(self):
         url = request.form['url']
-        qs = urlparse.urlparse(url).query
+        qs = urlparse(url).query
         parsed = cgi.parse_qs(qs)
         owner = parsed['owner'][0]
         repo = parsed['repo'][0]

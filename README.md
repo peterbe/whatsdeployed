@@ -1,6 +1,8 @@
 What's Deployed?
 ================
 
+**NOTE: This requires Python 3**
+
 What's deployed from a GitHub repo on various server environments?
 
 This requires that you have 2 or more URLs that return a git sha that
