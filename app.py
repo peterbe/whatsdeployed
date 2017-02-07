@@ -5,7 +5,7 @@ import os
 import urllib
 import cgi
 import random
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urlencode
 from collections import defaultdict
 
 import requests
@@ -298,7 +298,7 @@ class ShortlinkRedirectView(MethodView):
         for k, v in json.loads(shortlink.revisions):
             qs['name[]'].append(k)
             qs['url[]'].append(v)
-        return redirect('/?' + urllib.urlencode(qs, True))
+        return redirect('/?' + urlencode(qs, True))
 
 
 app.add_url_rule('/shas', view_func=ShasView.as_view('shas'))
