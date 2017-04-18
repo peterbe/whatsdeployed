@@ -69,6 +69,26 @@ def index_html():
     return send_file('index.html')
 
 
+def extract_sha(content):
+    content = content.strip()
+
+    if content.startswith('{') and content.endswith('}'):
+        # If it starts and ends with curly braces, it just might be a json
+        # object
+        try:
+            data = json.loads(content)
+
+            # This is where it's at in Dockerflow-supported sites
+            if 'commit' in data:
+                return data['commit']
+
+        except json.decoder.JSONDecodeError:
+            pass
+
+    if 7 <= len(content) <= 40:
+        return content
+
+
 class ShasView(MethodView):
 
     def post(self):
@@ -76,17 +96,25 @@ class ShasView(MethodView):
         for each in request.json:
             name = each['name']
             url = each['url']
+
+            # Skip empty urls
+            if not url:
+                continue
+
+            # Fetch the sha and balk if it doesn't exist
             content = self.fetch_content(url)
-            if not 7 <= len(content) <= 40:
+            sha = extract_sha(content)
+            if not sha:
                 # doesn't appear to be a git sha
                 error = (
                     "Doesn't look like a sha\n (%s) on %s" %
                     (content, each['url'])
                 )
                 return make_response(jsonify({'error': error}))
+
             deployments.append({
                 'name': name,
-                'sha': content,
+                'sha': sha,
                 'bugs': []
             })
         response = make_response(jsonify({'deployments': deployments}))
