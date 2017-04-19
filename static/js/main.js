@@ -327,8 +327,8 @@ $(function() {
 
   $('a.more').click(function() {
     $('.revisions')
-      .append($('<input type="text" name="name[]" class="form-control" placeholder="Name">'))
-      .append($('<input type="text" name="url[]" class="form-control" placeholder="URL to revision data">'));
+      .append($('<input type="text" name="name[]" class="form-control name" placeholder="Name">'))
+      .append($('<input type="text" name="url[]" class="form-control url" placeholder="URL to revision data">'));
     return false;
   });
 
