@@ -105,7 +105,7 @@
         <input type="text" name="owner" class="form-control" id="owner" value="mozilla">
       </div>
       <div class="form-group">
-        <label>Repo</label>
+        <label>Repository</label>
         <input type="text" name="repo" class="form-control" id="repo" placeholder="e.g. airmozilla">
       </div>
       <div class="form-group revisions">
@@ -113,9 +113,11 @@
         <input type="text" name="name[]" class="form-control name" placeholder="Dev">
         <input type="text" name="url[]" class="form-control url" placeholder="e.g. https://air-dev.allizom.org/media/revision or https://example.com/__version__">
       </div>
-      <p>More rows: <a href="#" class="more"><i class="glyphicon glyphicon-plus"></i></a></p>
+      <p>
+        <button type="button" class="btn btn-secondary more">Add Row</button>
+      </p>
       <div>
-        <button class="btn btn-primary">Make URL</button>
+        <button class="btn btn-primary">Generate <i>What's Deployed</i> Table</button>
       </div>
 
       <div id="whatisit">

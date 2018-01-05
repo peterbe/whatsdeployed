@@ -382,11 +382,7 @@ function makeProgressBar() {
 function makeDotter() {
   var c = $('#cloak .dots');
   var interval = setInterval(function() {
-      c.text(c.text() + '.');
-      // if (c.text().match(/\./g).length > 20) {
-      //   clearInterval(dotter);
-      //   $('#cloak p').text(" F' it! I give up! This is taking too long.");
-      // }
+    c.text(c.text() + '.');
   }, 1000);
   return interval;
 }
@@ -401,11 +397,34 @@ function giveUp() {
 
 $(function() {
 
-  $('a.more').click(function() {
+  $('form').on('click', 'button.more', function(event) {
+    event.preventDefault();
     $('.revisions')
       .append($('<input type="text" name="name[]" class="form-control name" placeholder="Name">'))
       .append($('<input type="text" name="url[]" class="form-control url" placeholder="URL to revision data">'));
-    return false;
+  });
+
+  /* Really basic validation */
+  $('form').on('submit', function(event) {
+    var owner = $('input[name="owner"]', this).val().trim();
+    if (!owner) {
+      event.preventDefault();
+      return alert("Missing 'Owner' input");
+    }
+    var repo = $('input[name="repo"]', this).val().trim();
+    if (!repo) {
+      event.preventDefault();
+      return alert("Missing 'Repository' input");
+    }
+    if (!$('input.name', this).val()) {
+      event.preventDefault();
+      return alert("Missing 'Revision URL name' input");
+    }
+    if (!$('input.url', this).val()) {
+      event.preventDefault();
+      return alert("Missing 'Revision URL' input");
+    }
+    return true;
   });
 
   $('button.reload').on('click', function() {
