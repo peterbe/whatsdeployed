@@ -2,7 +2,6 @@
 import json
 import time
 import os
-import urllib
 import cgi
 import random
 from urllib.parse import urlparse, urlencode
@@ -160,7 +159,7 @@ class CulpritsView(MethodView):
                 headers=GITHUB_REQUEST_HEADERS,
                 timeout=GITHUB_REQUEST_TIMEOUT,
             )
-            assert r.status_code == 200, r.status_code
+            r.raise_for_status()
             for pr in r.json():
                 if pr['merge_commit_sha'] == sha:
                     links.append(pr['_links']['html']['href'])
@@ -192,7 +191,7 @@ class CulpritsView(MethodView):
                         headers=GITHUB_REQUEST_HEADERS,
                         timeout=GITHUB_REQUEST_TIMEOUT,
                     )
-                    assert r.status_code == 200, r.status_code
+                    r.raise_for_status()
                     for comment in r.json():
                         try:
                             user = comment['user']
@@ -213,7 +212,7 @@ class CulpritsView(MethodView):
                 headers=GITHUB_REQUEST_HEADERS,
                 timeout=GITHUB_REQUEST_TIMEOUT,
             )
-            assert r.status_code == 200, r.status_code
+            r.raise_for_status()
             commit = r.json()
 
             author = commit['author']
