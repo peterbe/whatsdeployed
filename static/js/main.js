@@ -163,8 +163,15 @@ function start(deployments, owner, repo, callback) {
 function showGeneralError(html) {
   $('#error p').text(html);
   $('#table').hide();
-  $('#error').show();
+  $('#cloak').hide();
+  $('#error').hide().fadeIn(300);
 }
+
+function showCulpritsError(html) {
+  $('#culprits-error p').text(html);
+  $('#culprits-error').hide().fadeIn(300);
+}
+
 
 function init(owner, repo, deployments, callback) {
   document.title = "What's deployed on " + owner + "/" + repo + "?";
@@ -189,7 +196,8 @@ function init(owner, repo, deployments, callback) {
     if (callback) callback();
   });
   req.fail(function(jqxhr, status, error) {
-    console.warn("Unable to convert deployments to sha", error);
+    console.warn("Unable to convert deployments to sha", status, error);
+    showGeneralError(error);
   });
   var repo_url = 'https://github.com/' + owner + '/' + repo;
   $('.repo').append($('<a>').attr('href', repo_url).text(repo_url));
@@ -249,6 +257,10 @@ function culprits(owner, repo, deployments) {
     contentType: 'application/json'
   })
   .then(function(response) {
+    if (response.error) {
+      showCulpritsError(response.error);
+      return;
+    }
     var container = $('#culprits');
     $.each(response.culprits, function(i, group) {
       $('<h4>').append(
@@ -301,7 +313,8 @@ function culprits(owner, repo, deployments) {
     container.show();
   })
   .fail(function(jqxhr, status, error) {
-    console.warn("Unable to convert deployments to culprits", error);
+    console.warn("Unable to convert deployments to culprits", status, error);
+    showCulpritsError(error);
   });
 }
 
@@ -393,6 +406,10 @@ $(function() {
       .append($('<input type="text" name="name[]" class="form-control name" placeholder="Name">'))
       .append($('<input type="text" name="url[]" class="form-control url" placeholder="URL to revision data">'));
     return false;
+  });
+
+  $('button.reload').on('click', function() {
+    document.location.reload(true);
   });
 
   if (location.search) {

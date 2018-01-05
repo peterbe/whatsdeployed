@@ -8,6 +8,7 @@ from urllib.parse import urlparse, urlencode
 from collections import defaultdict
 
 import requests
+from requests.exceptions import ReadTimeout
 from flask import (
     Flask,
     request,
@@ -97,7 +98,22 @@ class ShasView(MethodView):
                 continue
 
             # Fetch the sha and balk if it doesn't exist
-            content = self.fetch_content(url)
+            try:
+                response = self.fetch_content(url)
+                if response.status_code != 200:
+                    return make_response(jsonify({
+                        'error': '{} trying to load {}'.format(
+                            response.status_code,
+                            url,
+                        )
+                    }))
+            except ReadTimeout:
+                return make_response(jsonify({
+                    'error': 'Timeout error trying to load {}'.format(
+                        url,
+                    )
+                }))
+            content = response.text.strip()
             sha = extract_sha(content)
             if not sha:
                 # doesn't appear to be a git sha
@@ -121,13 +137,11 @@ class ShasView(MethodView):
         else:
             url += '?'
         url += 'cachescramble=%s' % time.time()
-        r = requests.get(
+        return requests.get(
             url,
             headers=GITHUB_REQUEST_HEADERS,
             timeout=GITHUB_REQUEST_TIMEOUT,
         )
-        r.raise_for_status()
-        return r.text.strip()
 
 
 class CulpritsView(MethodView):
@@ -154,12 +168,20 @@ class CulpritsView(MethodView):
 
             users = []
             links = []
-            r = requests.get(
-                pulls_url,
-                headers=GITHUB_REQUEST_HEADERS,
-                timeout=GITHUB_REQUEST_TIMEOUT,
-            )
-            r.raise_for_status()
+            try:
+                r = requests.get(
+                    pulls_url,
+                    headers=GITHUB_REQUEST_HEADERS,
+                    timeout=GITHUB_REQUEST_TIMEOUT,
+                )
+                r.raise_for_status()
+            except ReadTimeout:
+                return make_response(jsonify({
+                    'error': 'Timeout error trying to load {}'.format(
+                        pulls_url,
+                    )
+                }))
+
             for pr in r.json():
                 if pr['merge_commit_sha'] == sha:
                     links.append(pr['_links']['html']['href'])

@@ -13,7 +13,7 @@
     body {
       font-size: 1rem;
     }
-    #error {
+    #error, #culprits-error {
       display: none;
       padding: 100px;
       color: red;
@@ -77,11 +77,13 @@
 
     <h2 class="text-center">What's Deployed?</h2>
 
-    <div id="error">
-      <h3>Error :(</h3>
+    <div id="error" class="alert alert-danger" role="alert">
+      <h3 class="alert-heading">Error 💔</h3>
       <p>
 
       </p>
+      <hr>
+      <button type="button" class="btn btn-danger reload">Reload Page</button>
     </div>
 
     <div id="cloak" class="text-center">
@@ -140,6 +142,16 @@
         <h3 class="page-header" title="People who were engaged in the latest commit for each environment">&ldquo;Culprits&rdquo;</h3>
 
       </div>
+
+      <div id="culprits-error" class="alert alert-danger" role="alert">
+        <h3 class="alert-heading">Culprits Server Error 🤮</h3>
+        <p>
+
+        </p>
+        <hr>
+        <button type="button" class="btn btn-danger reload">Reload Page</button>
+      </div>
+
     </div>
 
     <footer style="margin-top:40px">
