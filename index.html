@@ -57,6 +57,9 @@
     img.avatar {
       border-radius: 3px; /* this is what GitHub uses */
     }
+    #whatisit {
+      margin-top: 150px;
+    }
   </style>
 
   <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
@@ -113,6 +116,78 @@
       <p>More rows: <a href="#" class="more"><i class="glyphicon glyphicon-plus"></i></a></p>
       <div>
         <button class="btn btn-primary">Make URL</button>
+      </div>
+
+      <div id="whatisit">
+        <h3>
+          What Is <b>What's Deployed</b>?
+          <small class="text-muted">Primer on what's in front of you</small>
+        </h3>
+        <p>
+          <b>It's a web service for visualizing the difference between code
+          committed to <code>master</code> in your GitHub project compared
+          to which code has been deployed in your dev, stage and/or production
+          environment(s).</b>
+        </p>
+        <h4>The Basics</h4>
+        <p>
+          For this to work you need to have your code in a <b>public
+          GitHub repository</b> and the git SHA that is deployed on your
+          server(s) need to be publicly available.
+        </p>
+        <p>
+          The git SHA needs to be the content of the URL or it can be JSON
+          that contains a top-level key called <code>commit</code>. For example:
+        </p>
+        <pre>
+$ curl https://dev.example.com/deployed-version.txt
+d16cc25d58252a2b7e6bb394cbefa76b147d64d3
+        </pre>
+        <p>
+          Or, if it's JSON:
+        </p>
+        <pre>
+$ curl https://dev.example.com/deployed-version
+{"commit": "d16cc25d58252a2b7e6bb394cbefa76b147d64d3", "other": "stuff"}
+        </pre>
+        <p>
+          Once you've typed in the GitHub organization, GitHub repository
+          and at least one of these URLs you can generated a table
+          that shows what's been deployed on the server(s) compared to
+          what's available in the <code>master</code> branch.
+        </p>
+        <h4>
+          Examples
+        </h4>
+        <ul>
+          <li>
+            <a href="https://whatsdeployed.io/s-5HY" target="_blank">
+              mozilla-services/tecken
+            </a>
+          </li>
+          <li>
+            <a href="https://whatsdeployed.io/s-Sir" target="_blank">
+              peterbe/django-peterbecom
+            </a>
+          </li>
+          <li>
+            <a href="https://whatsdeployed.io/s-pdF" target="_blank">
+              mozilla/treeherder
+            </a>
+          </li>
+        </ul>
+        <h4>
+          Can I Have It?
+        </h4>
+        <p>
+          This instance is public and free for anybody to use. The
+          <a href="https://github.com/peterbe/whatsdeployed">source code</a>
+          is open and available under the
+          <a href="http://www.mozilla.org/MPL/2.0/">MPL 2.0</a> license.<br />
+          It's just a <a href="http://flask.pocoo.org/">Flask</a> app and
+          you can install and run your own instance if you want to
+          use this for your private repositories.
+        </p>
       </div>
     </form>
 
