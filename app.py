@@ -23,11 +23,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 
 DEBUG = os.environ.get('DEBUG', False) in ('true', '1', 'on')
-
-DEFAULT_REQUEST_HEADERS = {
-    'User-Agent': 'whatsdeployed',
-}
-
+GITHUB_REQUEST_TIMEOUT = 10
 GITHUB_REQUEST_HEADERS = {
     'User-Agent': 'whatsdeployed (https://whatsdeployed.io)',
 }
@@ -128,8 +124,8 @@ class ShasView(MethodView):
         url += 'cachescramble=%s' % time.time()
         r = requests.get(
             url,
-            headers=DEFAULT_REQUEST_HEADERS,
-            timeout=30,
+            headers=GITHUB_REQUEST_HEADERS,
+            timeout=GITHUB_REQUEST_TIMEOUT,
         )
         r.raise_for_status()
         return r.text.strip()
@@ -161,8 +157,8 @@ class CulpritsView(MethodView):
             links = []
             r = requests.get(
                 pulls_url,
-                headers=DEFAULT_REQUEST_HEADERS,
-                timeout=30,
+                headers=GITHUB_REQUEST_HEADERS,
+                timeout=GITHUB_REQUEST_TIMEOUT,
             )
             assert r.status_code == 200, r.status_code
             for pr in r.json():
@@ -193,8 +189,8 @@ class CulpritsView(MethodView):
                     )
                     r = requests.get(
                         issues_url,
-                        headers=DEFAULT_REQUEST_HEADERS,
-                        timeout=30,
+                        headers=GITHUB_REQUEST_HEADERS,
+                        timeout=GITHUB_REQUEST_TIMEOUT,
                     )
                     assert r.status_code == 200, r.status_code
                     for comment in r.json():
@@ -214,8 +210,8 @@ class CulpritsView(MethodView):
             )
             r = requests.get(
                 commits_url,
-                headers=DEFAULT_REQUEST_HEADERS,
-                timeout=30,
+                headers=GITHUB_REQUEST_HEADERS,
+                timeout=GITHUB_REQUEST_TIMEOUT,
             )
             assert r.status_code == 200, r.status_code
             commit = r.json()
@@ -329,9 +325,46 @@ class ShortlinkRedirectView(MethodView):
         return redirect('/?' + urlencode(qs, True))
 
 
+class GitHubAPI(MethodView):
+    """The client needs to make queries to the GitHub API but a shortcoming
+    is that it's impossible to include an auth token. And if you can't
+    do that clients are likely to hit rate limits."""
+
+    def get(self, thing):
+        url = 'https://api.github.com'
+        if thing == 'commits':
+            copied = dict(request.args)
+            owner = request.args.get('owner')
+            repo = request.args.get('repo')
+            if not owner:
+                abort(400, "No 'owner'")
+            if not repo:
+                abort(400, "No 'repo'")
+            url += '/repos/{}/{}/commits'.format(owner, repo)
+            copied.pop('owner')
+            copied.pop('repo')
+            if copied:
+                url += '?' + urlencode(copied, True)
+            response = requests.get(
+                url,
+                headers=GITHUB_REQUEST_HEADERS,
+                timeout=GITHUB_REQUEST_TIMEOUT
+            )
+            if response.status_code == 200:
+                return make_response(jsonify(response.json()))
+            else:
+                abort(response.status_code, response.content)
+        else:
+            abort(400)
+
+
 app.add_url_rule('/shas', view_func=ShasView.as_view('shas'))
 app.add_url_rule('/culprits', view_func=CulpritsView.as_view('culprits'))
 app.add_url_rule('/shortenit', view_func=ShortenView.as_view('shortenit'))
+app.add_url_rule(
+    '/githubapi/<string:thing>',
+    view_func=GitHubAPI.as_view('githubapi')
+)
 app.add_url_rule(
     '/s-<string:link>', view_func=ShortlinkRedirectView.as_view('shortlink')
 )
