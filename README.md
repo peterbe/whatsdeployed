@@ -10,6 +10,16 @@ references which git sha has been deployed.
 
 ![Example output](http://f.cl.ly/items/163S3J3n2s403z2r191w/Screen%20Shot%202013-11-01%20at%204.16.59%20PM.png)
 
+License
+-------
+
+[MPL 2.0](http://www.mozilla.org/MPL/2.0/)
+
+Credits
+-------
+
+[Checkbox icon](https://www.iconfinder.com/icons/282474/check_done_ok_icon#size=16)
+by [IcoCentre](https://www.iconfinder.com/konekierto).
 
 Development
 -----------

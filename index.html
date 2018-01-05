@@ -10,6 +10,9 @@
 
   <link rel="stylesheet" href="/static/css/bootstrap.min.css">
   <style>
+    body {
+      font-size: 1rem;
+    }
     #error {
       display: none;
       padding: 100px;
@@ -39,6 +42,20 @@
     }
     input.form-control.name {
       margin-top: 10px;
+    }
+    a {
+      /*color: rgb(0, 123, 255); bootstrap 4 */
+      color: rgb(51, 122, 183); /* bootstrap 3 */
+    }
+    td.checked {
+      background: url('/static/check.png') no-repeat;
+      background-position: center;
+    }
+    .media-body h5 {
+      margin-bottom: 0;
+    }
+    img.avatar {
+      border-radius: 3px; /* this is what GitHub uses */
     }
   </style>
 
@@ -94,7 +111,7 @@
     </form>
 
     <div id="table" style="display:none">
-      <table class="table table-condensed table-bordered">
+      <table class="table table-hover table-bordered table-sm">
         <thead>
           <tr id="deployments">
           </tr>
@@ -126,7 +143,6 @@
         <a href="https://www.peterbe.com/plog/whatsdeployed.io">about this service</a> &bull;
         <a href="https://github.com/peterbe/whatsdeployed">the code</a> &bull;
         <a href="https://github.com/peterbe/whatsdeployed/issues/new">problems?</a>
-
       </p>
     </footer>
   </div>

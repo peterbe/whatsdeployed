@@ -68,12 +68,17 @@ function start(deployments, owner, repo, callback) {
     var sha = commit.sha;
     var cell = $('<td>');
     if (commit.author && commit.author.avatar_url) {
-      cell.append($('<a>')
-                  .attr('href', commit.author.html_url)
-      .append($('<img>')
-               .attr('src', commit.author.avatar_url)
-               .attr('width', '36')
-         .attr('height', '36')));
+      cell.append(
+        $('<a>')
+        .attr('href', commit.author.html_url)
+        .append(
+          $('<img>')
+          .addClass('avatar')
+          .attr('src', commit.author.avatar_url)
+          .attr('width', '44')
+          .attr('height', '44')
+        )
+      );
     }
     var bug_number = bug_id(msg);
     if (bug_number) {
@@ -117,7 +122,7 @@ function start(deployments, owner, repo, callback) {
       var all = true;
       $.each(deployments, function(i, thing) {
         if (matched[thing.name]) {
-          row.append($('<td>').append($('<i class="glyphicon glyphicon-ok"></i>')));
+          row.append($('<td>').addClass('checked'));
           var bug_number = bug_id(commit.commit.message);
           if (bug_number) thing.bugs.push(bug_number);
         } else {
@@ -254,23 +259,26 @@ function culprits(owner, repo, deployments) {
       var users = $('<div>').addClass('users');
       $.each(group.users, function(j, userinfo) {
         var user_container = $('<div>').addClass('media');
-        $('<div>').addClass('media-left').append(
-          $('<a>')
-          .attr('href', userinfo[1].html_url)
-          .attr('target', '_blank')
-          .attr('rel', 'noopener')
-          .attr('title', userinfo[1].login)
-          .append(
-            $('<img>')
-            .addClass('media-object')
-            .attr('width', '36')
-            .attr('height', '36')
-            .attr('src', userinfo[1].avatar_url)
-          )
-        ).appendTo(user_container);
+        $('<a>')
+        .attr('href', userinfo[1].html_url)
+        .attr('target', '_blank')
+        .attr('rel', 'noopener')
+        .attr('title', userinfo[1].login)
+        .append(
+          $('<img>')
+          .addClass('mr-3').addClass('avatar')
+          .attr('width', '44')
+          .attr('height', '44')
+          .attr('src', userinfo[1].avatar_url)
+        )
+        .appendTo(user_container);
         $('<div>').addClass('media-body')
         .append(
-          $('<h5>').addClass('media-heading').text(userinfo[1].login)
+          $('<h5>').addClass('mt-0').append(
+            $('<a>')
+            .attr('href', userinfo[1].html_url)
+            .text(userinfo[1].login)
+          )
         ).append(
           $('<p>').text(userinfo[0])
         )
