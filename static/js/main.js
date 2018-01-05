@@ -332,6 +332,60 @@ function fetchBugzillaMetadata() {
 }
 
 
+/* Return an interval you can clear if you want to. */
+function makeProgressBar() {
+  var bar = $('#cloak .progress-bar');
+  var progress = 0;
+  var interval = setInterval(function() {
+    bar
+    .css('width', '' + progress + '%')
+    .attr('aria-valuenow', '' + progress);
+    var increment = 10;
+    if (progress > 90) {
+      increment = 1;
+    } else if (progress > 80) {
+      increment = 2;
+    } else if (progress > 50) {
+      increment = 4;
+    }
+    progress += increment;
+    if (progress >= 100) {
+      clearInterval(interval);
+    }
+    if (progress > 95) {
+      if (!bar.hasClass('bg-danger')) {
+        bar.removeClass('bg-warning').addClass('bg-danger');
+      }
+    } else if (progress > 85) {
+      if (!bar.hasClass('bg-warning')) {
+        bar.removeClass('bg-success').addClass('bg-warning');
+      }
+    }
+  }, 300);
+  return interval;
+}
+
+/* Return an interval you can clear if you want to. */
+function makeDotter() {
+  var c = $('#cloak .dots');
+  var interval = setInterval(function() {
+      c.text(c.text() + '.');
+      // if (c.text().match(/\./g).length > 20) {
+      //   clearInterval(dotter);
+      //   $('#cloak p').text(" F' it! I give up! This is taking too long.");
+      // }
+  }, 1000);
+  return interval;
+}
+
+function giveUp() {
+  if ($('#cloak:visible').length) {
+    $('#cload .progress').hide();
+    $('#cloak p').text(" F' it! I give up! This is taking too long.");
+  }
+}
+
+
 $(function() {
 
   $('a.more').click(function() {
@@ -341,26 +395,31 @@ $(function() {
     return false;
   });
 
-
   if (location.search) {
-    var dotter = setInterval(function() {
-        var c = $('#cloak .dots');
-        c.text(c.text() + '.');
-        if (c.text().match(/\./g).length > 20) {
-          clearInterval(dotter);
-          $('#cloak p').text(" F' it! I give up! This is taking too long.");
-        }
-    }, 500);
+
+    var dotter = makeDotter();
+    var progressBarer = makeProgressBar();
 
     paramsToDeployment(location.search, function() {
       $('h2').text($('h2').text().replace('?', ''));
       $('#cloak').hide();
-      $('#table').fadeIn(500);
+      $('#table').hide().fadeIn(500);
       clearInterval(dotter);
+      clearInterval(progressBarer);
     });
+
+    setTimeout(function() {
+      // If the cloak is still visible, that means took more than this time
+      // for the paramsToDeployment() to call back. This is our equivalent
+      // of a timeout.
+      giveUp();
+      clearInterval(dotter);
+      clearInterval(progressBarer);
+    }, 10000);
+
   } else {
     $('#cloak').hide();
-    $('form').fadeIn(500);
+    $('form').hide().fadeIn(500);
   }
 
 });
