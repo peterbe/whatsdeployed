@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * $.parseParams - parse query string paramaters into an object.
  * https://gist.github.com/kares/956897
@@ -37,9 +39,10 @@ function start(deployments, owner, repo, callback) {
   function bug_url(id) {
     return 'https://bugzilla.mozilla.org/show_bug.cgi?id=' + id;
   }
-  function bug_id(commit) {
-    var msg = commit.commit.message;
-    if (msg.match(/\d{6,7}/g)) return msg.match(/\d{6,7}/g)[0];
+  function bug_id(msg) {
+    if (msg.match(/\b\d{6,7}\b/g)) {
+      return msg.match(/\b\d{6,7}\b/g)[0];
+    }
     return false;
   }
 
@@ -72,8 +75,7 @@ function start(deployments, owner, repo, callback) {
                .attr('width', '36')
          .attr('height', '36')));
     }
-
-    bug_number = bug_id(commit);
+    var bug_number = bug_id(msg);
     if (bug_number) {
       cell.append($('<a>')
                   .attr('href', bug_url(bug_number))
@@ -117,7 +119,7 @@ function start(deployments, owner, repo, callback) {
       $.each(deployments, function(i, thing) {
         if (matched[thing.name]) {
           row.append($('<td>').append($('<i class="glyphicon glyphicon-ok"></i>')));
-          bug_number = bug_id(commit);
+          var bug_number = bug_id(commit.commit.message);
           if (bug_number) thing.bugs.push(bug_number);
         } else {
           all = false;
