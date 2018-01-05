@@ -92,9 +92,8 @@ function start(deployments, owner, repo, callback) {
   }
   //var first_sha = deployments[0].sha;
   $('#cap').hide();
-  var commitsURL = 'https://api.github.com/repos/' + owner + '/' + repo + '/commits?per_page=60';
-  $.getJSON(commitsURL,
-            //{sha: first_sha},
+  var commitsURL = '/githubapi/commits';
+  $.getJSON(commitsURL, {owner: owner, repo: repo, per_page: 60},
       function(response) {
 
     var matched = {};
