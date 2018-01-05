@@ -1,4 +1,4 @@
-FROM python:3.5.3-slim
+FROM python:3.5-slim
 
 WORKDIR /app/
 RUN groupadd --gid 10001 app && useradd -g app --uid 10001 --shell /usr/sbin/nologin app
@@ -17,7 +17,7 @@ COPY . /app/
 # Set Python-related environment variables to reduce annoying-ness
 ENV PYTHONUNBUFFERED 1
 ENV PYTHONDONTWRITEBYTECODE 1
-ENV PORT 8000
+ENV PORT 5000
 
 USER app
 

@@ -1,18 +1,9 @@
-# Requires docker 1.10.0+ and docker-compose 1.6.0+.
 version: '2'
 services:
-  socorrobase:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    volumes:
-      - .:/app
 
-  # ------------------------------------------------------
-  # THE COLLECTOR
-  # ------------------------------------------------------
+  postgresql:
+    image: postgres:9.5
 
-  # Runs the collector WSGI and collector crashmover apps
   web:
     build:
       context: .
@@ -20,23 +11,10 @@ services:
     links:
       - postgresql
     environment:
-      - DEBUG=1
-      - SQLALCHEMY_DATABASE_URI=postgres://xxx:xxx@postgresql/whatsdeployed
-    expose:
-      - "8000"
+      - DEBUG=${DEBUG}
+      - SQLALCHEMY_DATABASE_URI=postgres://postgres@postgresql/postgres
+      - GITHUB_AUTH_TOKEN=${GITHUB_AUTH_TOKEN}
     ports:
-      - "8000:8000"
-
-
-  # ------------------------------------------------------
-  # External services
-  # ------------------------------------------------------
-
-  postgresql:
-    # https://hub.docker.com/_/postgres/
-    image: postgres:9.4
-    environment:
-      # FIXME(willkg): Set these to whatever we use--must match config
-      - POSTGRES_PASSWORD=xxx
-      - POSTGRES_USER=xxx
-      - POSTGRES_DB=whatsdeployed
+      - "5000:5000"
+    volumes:
+      - $PWD:/app

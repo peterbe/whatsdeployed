@@ -4,6 +4,7 @@ import time
 import os
 import cgi
 import random
+import warnings
 from urllib.parse import urlparse, urlencode
 from collections import defaultdict
 
@@ -20,21 +21,29 @@ from flask import (
 )
 from flask.views import MethodView
 from flask_sqlalchemy import SQLAlchemy
+from decouple import config
 
 
-DEBUG = os.environ.get('DEBUG', False) in ('true', '1', 'on')
-GITHUB_REQUEST_TIMEOUT = 10
+DEBUG = config('DEBUG', default=False)
+GITHUB_REQUEST_TIMEOUT = config('GITHUB_REQUEST_TIMEOUT', default=10)
 GITHUB_REQUEST_HEADERS = {
-    'User-Agent': 'whatsdeployed (https://whatsdeployed.io)',
+    'User-Agent': config(
+        'REQUESTS_USER_AGENT',
+        default='whatsdeployed (https://whatsdeployed.io)'
+    ),
 }
-GITHUB_AUTH_TOKEN = os.environ.get('GITHUB_AUTH_TOKEN')
+GITHUB_AUTH_TOKEN = config('GITHUB_AUTH_TOKEN', default=None)
 if GITHUB_AUTH_TOKEN:
     GITHUB_REQUEST_HEADERS['Authorization'] = (
         'token {}'.format(GITHUB_AUTH_TOKEN)
     )
+else:
+    warnings.warn(
+        "GITHUB_AUTH_TOKEN is NOT available. Worry about rate limits."
+    )
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
+app.config['SQLALCHEMY_DATABASE_URI'] = config(
     'SQLALCHEMY_DATABASE_URI',
     'postgres://localhost/whatsdeployed'
 )
