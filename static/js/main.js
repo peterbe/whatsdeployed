@@ -26,7 +26,7 @@ $.parseParams = function(query) {
 function start(deployments, owner, repo, callback) {
 
   var shas = {};
-  $('#deployments').append($('<th>').text('Master'));
+  $('#deployments').append($('<th>').text('Commits on master'));
   $.each(deployments, function(i, thing) {
     var $th = ($('<th>').attr('id', thing.name+'-col')
       .append($('<a>').attr('title', 'Show column in Bugzilla').text(thing.name)));
