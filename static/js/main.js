@@ -23,6 +23,13 @@ $.parseParams = function(query) {
 })(jQuery);
 
 
+function shortSha(sha) {
+  if (sha.length > 7) {
+    return sha.substring(0, 7);
+  }
+  return sha;
+}
+
 function start(deployments, owner, repo, callback) {
 
   var shas = {};
@@ -33,11 +40,14 @@ function start(deployments, owner, repo, callback) {
     $('#deployments').append($th);
     shas[thing.name] = thing.sha;
   });
-  function commit_url(sha) {
-    return 'https://github.com/' + owner + '/' + repo + '/commit/' + sha;
+  function commitUrl(sha) {
+    return `https://github.com/${owner}/${repo}/commit/${sha}`;
+  }
+  function compareUrl(from, to) {
+    return `https://github.com/${owner}/${repo}/compare/${shortSha(from)}...${shortSha(to)}`;
   }
   function bug_url(id) {
-    return 'https://bugzilla.mozilla.org/show_bug.cgi?id=' + id;
+    return `https://bugzilla.mozilla.org/show_bug.cgi?id=${id}`;
   }
   function bug_id(msg) {
     if (msg.match(/\b\d{6,7}\b/g)) {
@@ -46,12 +56,57 @@ function start(deployments, owner, repo, callback) {
     return false;
   }
 
-  function link_cols() {
+  // Paint a table for all known URLs, and their GitHub URLs
+  var urlsTable = $('table.urls tbody');
+  var tr = $('<tr>');
+  tr.append(
+    $('<th>').text('Revision URLs')
+  );
+  tr.append(
+    $('<th>').text('SHA')
+  );
+  $.each(deployments, function(i, each) {
+    tr.append($('<td>').text(each.name));
+  });
+  tr.appendTo(urlsTable);
+
+  $.each(deployments, function(i, each) {
+    var tr = $('<tr>')
+    tr.append(
+      $('<td>').append(
+        $('<a>').attr('href', each.url).text(each.name)
+      )
+    );
+    tr.append(
+      $('<td>').append(
+        $('<a>').attr('href', commitUrl(each.sha)).text(shortSha(each.sha))
+      )
+    );
+    $.each(deployments, function(j, other) {
+      if (each.url === other.url) {
+        tr.append(
+          $('<td>').text('-')
+        );
+      } else {
+        tr.append(
+          $('<td>').append(
+            $('<a>').addClass('compare-url')
+            .attr('href', compareUrl(each.sha, other.sha)).append(
+              compareString(each.name, other.name)
+            )
+          )
+        );
+      }
+    });
+    tr.appendTo(urlsTable);
+  });
+
+  function linkColumns() {
     $.each(deployments, function(i, thing) {
       if (thing.bugs.length) {
         var bug_query = thing.bugs.join('%2C');
-        $('#'+thing.name+'-col a')
-          .attr('href', 'https://bugzilla.mozilla.org/buglist.cgi?bug_id='+bug_query+'&bug_id_type=anyexact&bug_status=ALL');
+        $(`#${thing.name}-col a`)
+          .attr('href', `https://bugzilla.mozilla.org/buglist.cgi?bug_id=${bug_query}&bug_id_type=anyexact&bug_status=ALL`);
       }
     });
   }
@@ -132,7 +187,7 @@ function start(deployments, owner, repo, callback) {
       });
       row.appendTo($commits);
       if (all) {
-        link_cols();
+        linkColumns();
         fetchBugzillaMetadata();
         culprits(owner, repo, deployments);
         keep_going = false;
@@ -173,8 +228,21 @@ function showCulpritsError(html) {
 }
 
 
+function compareString(from, to) {
+  return $('<span>').append(
+    $('<span>').text('Compare ')
+  ).append(
+    $('<b>').text(from)
+  ).append(
+    $('<span>').text(' ↔ ')
+  ).append(
+    $('<b>').text(to)
+  );
+}
+
 function init(owner, repo, deployments, callback) {
-  document.title = "What's deployed on " + owner + "/" + repo + "?";
+  // document.title = "What's deployed on " + owner + "/" + repo + "?";
+  document.title = `What's deployed on ${owner}/${repo}?`;
   var req = $.ajax({
     url: '/shas',
     type: 'POST',
@@ -201,10 +269,8 @@ function init(owner, repo, deployments, callback) {
   });
   var repo_url = 'https://github.com/' + owner + '/' + repo;
   $('.repo').append($('<a>').attr('href', repo_url).text(repo_url));
-  $.each(deployments, function(i, each) {
-    $('<dd>').append($('<a>').attr('href', each.url).text(each.name))
-      .insertAfter('.urls');
-  });
+
+
 }
 
 

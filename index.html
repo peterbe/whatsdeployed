@@ -37,6 +37,9 @@
       text-decoration: line-through !important;
     }
 
+    #culprits {
+      margin-top: 60px;
+    }
     #culprits h4 {
       margin-top: 35px;
     }
@@ -61,6 +64,9 @@
     }
     #whatisit {
       margin-top: 150px;
+    }
+    a.compare-url {
+      font-size: 80%;
     }
   </style>
 
@@ -211,11 +217,15 @@ $ curl https://dev.example.com/deployed-version
 
       <p id="cap" style="display:none" class="text-muted">Stopping as soon as all environments have a particular commit in common.</p>
 
-      <dl class="dl-horizontal">
-        <dt>Repo</dt>
-        <dd class="repo"></dd>
-        <dt class="urls">Using these URLs</dt>
-      </dl>
+      <h5>Repo</h5>
+      <p class="repo"></p>
+
+      <!-- <h5>Using these URLs</h5> -->
+      <table class="table table-sm urls">
+        <tbody>
+
+        </tbody>
+      </table>
 
       <div id="culprits" style="display:none">
         <h3 class="page-header" title="People who were engaged in the latest commit for each environment">&ldquo;Culprits&rdquo;</h3>

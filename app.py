@@ -135,7 +135,8 @@ class ShasView(MethodView):
             deployments.append({
                 'name': name,
                 'sha': sha,
-                'bugs': []
+                'bugs': [],
+                'url': url,
             })
         response = make_response(jsonify({'deployments': deployments}))
         return response
