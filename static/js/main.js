@@ -208,10 +208,32 @@ function start(deployments, owner, repo, callback) {
 
     var req = $.post('/shortenit', { url: location.href });
     req.then(function(r) {
-      $('#shorten a')
+      var fullUrl = location.protocol + '//' + location.host + r.url;
+      $('#shorten a.short')
         .attr('href', r.url)
-        .text(location.protocol + '//' + location.host + r.url);
+        .text(fullUrl);
+
+      var envs = deployments
+        .map(deployment => deployment.name.toLowerCase())
+        .join(',');
+      var badgeSrc = `https://img.shields.io/badge/whatsdeployed-${envs}-green.svg`;
+      $('#shorten a.badge')
+        .attr('href', r.url)
+        .append($('<img>').attr('src', badgeSrc));
       $('#shorten').show();
+
+      $('#badge-help .image-url').text(badgeSrc);
+      $('#badge-help .markdown').text(
+        `
+[![Build Status](${badgeSrc})](${fullUrl})
+      `.trim()
+      );
+      $('#badge-help .rest').text(
+        `
+.. |whatsdeployed| image:: ${badgeSrc}
+    :target: ${fullUrl}
+      `.trim()
+      );
     });
     req.fail(function(jqXHR, textStatus, errorThrown) {
       console.warn('URL shortening service failed', errorThrown);
@@ -472,6 +494,13 @@ function giveUp() {
   }
 }
 
+function toggleShortenBadgeHelp() {
+  $('#badge-help').toggle();
+  $('#shorten a.help').text(
+    $('#shorten a.help').text() === 'help?' ? 'close help' : 'help?'
+  );
+}
+
 $(function() {
   $('form').on('click', 'button.more', function(event) {
     event.preventDefault();
@@ -513,6 +542,10 @@ $(function() {
       return alert("Missing 'Revision URL' input");
     }
     return true;
+  });
+
+  $('#shorten').on('click', 'a.help', function(event) {
+    toggleShortenBadgeHelp();
   });
 
   $('button.reload').on('click', function() {

@@ -210,10 +210,31 @@ $ curl https://dev.example.com/deployed-version
         <tbody id="commits">
         </tbody>
       </table>
+
       <p id="shorten" style="display:none;float:right">
         Short URL:
-        <a></a>
+        <a class="short"></a>
+        <br/>
+        Badge: <a class="badge"></a> <a href="#" class="help">help?</a>
       </p>
+
+      <div id="badge-help" style="display:none">
+        <h3 class="page-header">Badge Help</h3>
+        <b>Image URL:</b>
+        <pre class="image-url">
+          IMAGE URL
+        </pre>
+        <br/>
+        <b>Markdown:</b>
+        <pre class="markdown">
+          MARKDOWN
+        </pre>
+        <br/>
+        <b>ReStructured Text:</b>
+        <pre class="rest">
+          ReST
+        </pre>
+      </div>
 
       <p id="cap" style="display:none" class="text-muted">Stopping as soon as all environments have a particular commit in common.</p>
 
