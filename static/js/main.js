@@ -225,7 +225,7 @@ function start(deployments, owner, repo, callback) {
       $('#badge-help .image-url').text(badgeSrc);
       $('#badge-help .markdown').text(
         `
-[![Build Status](${badgeSrc})](${fullUrl})
+[![What's Deployed](${badgeSrc})](${fullUrl})
       `.trim()
       );
       $('#badge-help .rest').text(
