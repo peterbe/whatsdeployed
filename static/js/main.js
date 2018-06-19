@@ -32,6 +32,8 @@ function shortSha(sha) {
   return sha;
 }
 
+var shortUrls = JSON.parse(localStorage.getItem('shortUrls') || '[]');
+
 function start(deployments, owner, repo, callback) {
   var shas = {};
   $('#deployments').append($('<th>').text('Commits on master'));
@@ -234,6 +236,18 @@ function start(deployments, owner, repo, callback) {
     :target: ${fullUrl}
       `.trim()
       );
+
+      if (
+        !shortUrls.includes(r.url) ||
+        (shortUrls.length && shortUrls[0] !== r.url)
+      ) {
+        // We either didn't have it or it wasn't first in the list
+        shortUrls = shortUrls.filter(function(each) {
+          return each !== r.url;
+        });
+        shortUrls.unshift(r.url);
+        localStorage.setItem('shortUrls', JSON.stringify(shortUrls));
+      }
     });
     req.fail(function(jqXHR, textStatus, errorThrown) {
       console.warn('URL shortening service failed', errorThrown);
@@ -501,6 +515,38 @@ function toggleShortenBadgeHelp() {
   );
 }
 
+function listExistingShortUrls() {
+  $.get('/shortened', { urls: shortUrls.join(',') })
+    .then(function(r) {
+      if (r.environments.length) {
+        var parent = $('#previous ul');
+        r.environments.forEach(function(env) {
+          console.log(env.revisions, typeof env.revisions);
+          // Why can't I use env.revisions.map??
+          var names = env.revisions.map(function(rev) {
+            return rev[0];
+          });
+          $('<li>')
+            .append(
+              $('<a>')
+                .attr('href', env.url)
+                .text(`${env.owner}/${env.repo}`)
+            )
+            .append(
+              $('<span>')
+                .addClass('names')
+                .text(names.join(', '))
+            )
+            .appendTo(parent);
+        });
+        $('#previous').show();
+      }
+    })
+    .fail(function(jqXHR, textStatus, errorThrown) {
+      console.warn('URL shortening service failed', errorThrown);
+    });
+}
+
 $(function() {
   $('form').on('click', 'button.more', function(event) {
     event.preventDefault();
@@ -583,5 +629,10 @@ $(function() {
     $('form')
       .hide()
       .fadeIn(500);
+
+    if (shortUrls.length) {
+      // You've been here before!
+      listExistingShortUrls();
+    }
   }
 });

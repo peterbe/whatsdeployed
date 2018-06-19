@@ -338,6 +338,39 @@ class ShortenView(MethodView):
         return make_response(jsonify({'url': new_url}))
 
 
+class ShortenedView(MethodView):
+
+    def get(self):
+        urls = request.args.get('urls')
+        if not urls:
+            abort(400)
+        ids = [
+            x.replace('/s-', '') for x in urls.split(',')
+            if x.startswith('/s-')
+        ]
+        environments = []
+        shortlinks = Shortlink.query.filter(Shortlink.link.in_(ids)).all()
+        for shortlink in shortlinks:
+            qs = {
+                'repo': shortlink.repo,
+                'owner': shortlink.owner,
+                'name[]': [],
+                'url[]': []
+            }
+            for k, v in json.loads(shortlink.revisions):
+                qs['name[]'].append(k)
+                qs['url[]'].append(v)
+            url = '/?' + urlencode(qs, True)
+            environments.append({
+                'owner': shortlink.owner,
+                'repo': shortlink.repo,
+                'revisions': json.loads(shortlink.revisions),
+                'url': url,
+            })
+
+        return make_response(jsonify({'environments': environments}))
+
+
 class ShortlinkRedirectView(MethodView):
 
     def get(self, link):
@@ -392,6 +425,7 @@ class GitHubAPI(MethodView):
 app.add_url_rule('/shas', view_func=ShasView.as_view('shas'))
 app.add_url_rule('/culprits', view_func=CulpritsView.as_view('culprits'))
 app.add_url_rule('/shortenit', view_func=ShortenView.as_view('shortenit'))
+app.add_url_rule('/shortened', view_func=ShortenedView.as_view('shortened'))
 app.add_url_rule(
     '/githubapi/<string:thing>',
     view_func=GitHubAPI.as_view('githubapi')
