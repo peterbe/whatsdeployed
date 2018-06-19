@@ -98,7 +98,35 @@ class ShasView(MethodView):
 
     def post(self):
         deployments = []
-        for each in request.json:
+        environment = request.json
+
+        base_url = 'https://api.github.com/repos/{owner}/{repo}'.format(
+            repo=environment['repo'],
+            owner=environment['owner']
+        )
+        tags_url = base_url + (
+            '/tags?sort=created&direction=desc'
+        )
+
+        tags = {}
+        while True:
+            try:
+                r = requests.get(
+                    tags_url,
+                    headers=GITHUB_REQUEST_HEADERS,
+                    timeout=GITHUB_REQUEST_TIMEOUT,
+                )
+                r.raise_for_status()
+                for tag in r.json():
+                    tags[tag['commit']['sha']] = tag['name']
+                try:
+                    tags_url = r.links['next']['url']
+                except KeyError:
+                    break
+            except ReadTimeout:
+                break
+
+        for each in environment['deployments']:
             name = each['name']
             url = each['url']
 
@@ -138,7 +166,11 @@ class ShasView(MethodView):
                 'bugs': [],
                 'url': url,
             })
-        response = make_response(jsonify({'deployments': deployments}))
+
+        response = make_response(jsonify({
+            'deployments': deployments,
+            'tags': tags,
+        }))
         return response
 
     def fetch_content(self, url):

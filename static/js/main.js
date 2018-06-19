@@ -34,7 +34,7 @@ function shortSha(sha) {
 
 var shortUrls = JSON.parse(localStorage.getItem('shortUrls') || '[]');
 
-function start(deployments, owner, repo, callback) {
+function start(deployments, owner, repo, tags) {
   var shas = {};
   $('#deployments').append($('<th>').text('Commits on master'));
   $.each(deployments, function(i, thing) {
@@ -85,13 +85,21 @@ function start(deployments, owner, repo, callback) {
           .text(each.name)
       )
     );
-    tr.append(
-      $('<td>').append(
-        $('<a>')
-          .attr('href', commitUrl(each.sha))
-          .text(shortSha(each.sha))
-      )
+    var cell = $('<td>');
+    cell.append(
+      $('<a>')
+        .attr('href', commitUrl(each.sha))
+        .text(shortSha(each.sha))
     );
+    var tag = tags[each.sha];
+    if (tag) {
+      cell.append(
+        $('<span class="badge badge-pill badge-info">Info</span>')
+          .attr('title', `Tag: ${tag}`)
+          .text(tag)
+      );
+    }
+    tr.append(cell);
     $.each(deployments, function(j, other) {
       if (each.url === other.url) {
         tr.append($('<td>').text('-'));
@@ -163,6 +171,14 @@ function start(deployments, owner, repo, callback) {
         .attr('title', msg)
         .text(msg_first)
     );
+    var tag = tags[commit.sha];
+    if (tag) {
+      cell.append(
+        $('<span class="badge badge-pill badge-info">Info</span>')
+          .attr('title', `Tag: ${tag}`)
+          .text(tag)
+      );
+    }
     return cell;
   }
   //var first_sha = deployments[0].sha;
@@ -288,14 +304,18 @@ function init(owner, repo, deployments, callback) {
   var req = $.ajax({
     url: '/shas',
     type: 'POST',
-    data: JSON.stringify(deployments),
+    data: JSON.stringify({
+      deployments: deployments,
+      owner: owner,
+      repo: repo
+    }),
     contentType: 'application/json'
   });
   req.then(function(response) {
     if (response.error) {
       showGeneralError(response.error);
     } else {
-      start(response.deployments, owner, repo);
+      start(response.deployments, owner, repo, response.tags);
     }
     var titletag = document.head.querySelector(
       'meta[name="apple-mobile-web-app-title"]'
