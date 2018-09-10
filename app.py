@@ -448,11 +448,7 @@ class GitHubAPI(MethodView):
                 timeout=GITHUB_REQUEST_TIMEOUT
             )
             if response.status_code == 200:
-                print(response.headers)
-                response_json = response.json()
-                print(len(response_json))
-                resp = make_response(jsonify(response_json))
-                return resp
+                return make_response(jsonify(response.json()))
             else:
                 abort(response.status_code, response.content)
         else:
