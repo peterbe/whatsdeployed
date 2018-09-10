@@ -216,6 +216,13 @@ $ curl https://dev.example.com/deployed-version
     </form>
 
     <div id="table" style="display:none">
+
+      <div id="bors" style="display:none" class="alert alert-info" role="alert">
+        There are commits here by <b><code>bors[bot]</code></b>!<br/>
+        <label for="id_bors"><b>Enable "bors mode"</b></label>
+        <input type="checkbox" name="bors" id="id_bors" />
+      </div>
+
       <table class="table table-hover table-bordered table-sm">
         <thead>
           <tr id="deployments">
