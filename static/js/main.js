@@ -184,91 +184,98 @@ function start(deployments, owner, repo, tags) {
   //var first_sha = deployments[0].sha;
   $('#cap').hide();
   var commitsURL = '/githubapi/commits';
-  $.getJSON(commitsURL, { owner: owner, repo: repo, per_page: 60 }, function(
-    response
-  ) {
-    var matched = {};
-    var $commits = $('#commits');
-    var keep_going = true;
-    var cap = true;
+  var PER_PAGE = 100;
+  $.getJSON(
+    commitsURL,
+    { owner: owner, repo: repo, per_page: PER_PAGE },
+    function(response) {
+      var matched = {};
+      var $commits = $('#commits');
+      var keep_going = true;
+      var cap = true;
 
-    $.each(response, function(i, commit) {
-      if (!keep_going && cap) return;
-      $.each(shas, function(name, sha) {
-        if (sha === commit.sha) {
-          matched[name] = true;
-        } else if (sha === commit.sha.substring(0, 7)) {
-          matched[name] = true;
-          commit.sha = commit.sha.substring(0, 7);
+      $.each(response, function(i, commit) {
+        if (!keep_going && cap) return;
+        $.each(shas, function(name, sha) {
+          if (sha === commit.sha) {
+            matched[name] = true;
+          } else if (sha === commit.sha.substring(0, 7)) {
+            matched[name] = true;
+            commit.sha = commit.sha.substring(0, 7);
+          }
+        });
+        var row = $('<tr>').append(makeMessage(commit));
+        var all = true;
+        $.each(deployments, function(i, thing) {
+          if (matched[thing.name]) {
+            row.append($('<td>').addClass('checked'));
+            var bug_number = bug_id(commit.commit.message);
+            if (bug_number) thing.bugs.push(bug_number);
+          } else {
+            all = false;
+            row.append($('<td>').text(''));
+          }
+        });
+        row.appendTo($commits);
+        if (all) {
+          linkColumns();
+          fetchBugzillaMetadata();
+          culprits(owner, repo, deployments);
+          keep_going = false;
+          $('#cap').show();
         }
       });
-      var row = $('<tr>').append(makeMessage(commit));
-      var all = true;
-      $.each(deployments, function(i, thing) {
-        if (matched[thing.name]) {
-          row.append($('<td>').addClass('checked'));
-          var bug_number = bug_id(commit.commit.message);
-          if (bug_number) thing.bugs.push(bug_number);
-        } else {
-          all = false;
-          row.append($('<td>').text(''));
-        }
-      });
-      row.appendTo($commits);
-      if (all) {
-        linkColumns();
-        fetchBugzillaMetadata();
-        culprits(owner, repo, deployments);
-        keep_going = false;
-        $('#cap').show();
+      if (keep_going) {
+        $('#max .count').text(PER_PAGE);
+        $('#max').show();
       }
-    });
 
-    var req = $.post('/shortenit', { url: location.href });
-    req.then(function(r) {
-      var fullUrl = location.protocol + '//' + location.host + r.url;
-      $('#shorten a.short')
-        .attr('href', r.url)
-        .text(fullUrl);
+      var req = $.post('/shortenit', { url: location.href });
+      req.then(function(r) {
+        var fullUrl = location.protocol + '//' + location.host + r.url;
+        $('#shorten a.short')
+          .attr('href', r.url)
+          .text(fullUrl);
 
-      var envs = deployments
-        .map(deployment => deployment.name.toLowerCase())
-        .join(',');
-      var badgeSrc = `https://img.shields.io/badge/whatsdeployed-${envs}-green.svg`;
-      $('#shorten a.badge')
-        .attr('href', r.url)
-        .append($('<img>').attr('src', badgeSrc));
-      $('#shorten').show();
+        var envs = deployments
+          .map(deployment => deployment.name.toLowerCase())
+          .join(',');
+        var badgeSrc = `https://img.shields.io/badge/whatsdeployed-${envs}-green.svg`;
+        $('#shorten a.badge')
+          .attr('href', r.url)
+          .append($('<img>').attr('src', badgeSrc));
+        $('#shorten').show();
 
-      $('#badge-help .image-url').text(badgeSrc);
-      $('#badge-help .markdown').text(
-        `
+        $('#badge-help .image-url').text(badgeSrc);
+        $('#badge-help .markdown').text(
+          `
 [![What's Deployed](${badgeSrc})](${fullUrl})
       `.trim()
-      );
-      $('#badge-help .rest').text(
-        `
+        );
+        $('#badge-help .rest').text(
+          `
 .. |whatsdeployed| image:: ${badgeSrc}
     :target: ${fullUrl}
       `.trim()
-      );
+        );
 
-      if (
-        !shortUrls.includes(r.url) ||
-        (shortUrls.length && shortUrls[0] !== r.url)
-      ) {
-        // We either didn't have it or it wasn't first in the list
-        shortUrls = shortUrls.filter(function(each) {
-          return each !== r.url;
-        });
-        shortUrls.unshift(r.url);
-        localStorage.setItem('shortUrls', JSON.stringify(shortUrls));
-      }
-    });
-    req.fail(function(jqXHR, textStatus, errorThrown) {
-      console.warn('URL shortening service failed', errorThrown);
-    });
-  }).fail(function() {
+        if (
+          !shortUrls.includes(r.url) ||
+          (shortUrls.length && shortUrls[0] !== r.url)
+        ) {
+          // We either didn't have it or it wasn't first in the list
+          shortUrls = shortUrls.filter(function(each) {
+            return each !== r.url;
+          });
+          shortUrls.unshift(r.url);
+          localStorage.setItem('shortUrls', JSON.stringify(shortUrls));
+        }
+      });
+      req.fail(function(jqXHR, textStatus, errorThrown) {
+        console.warn('URL shortening service failed', errorThrown);
+      });
+    }
+  ).fail(function() {
     console.error.apply(console, arguments);
     showGeneralError('Unable to download commits for "' + commitsURL + '"');
   });

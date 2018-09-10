@@ -436,6 +436,7 @@ class GitHubAPI(MethodView):
                 abort(400, "No 'owner'")
             if not repo:
                 abort(400, "No 'repo'")
+
             url += '/repos/{}/{}/commits'.format(owner, repo)
             copied.pop('owner')
             copied.pop('repo')
@@ -447,7 +448,11 @@ class GitHubAPI(MethodView):
                 timeout=GITHUB_REQUEST_TIMEOUT
             )
             if response.status_code == 200:
-                return make_response(jsonify(response.json()))
+                print(response.headers)
+                response_json = response.json()
+                print(len(response_json))
+                resp = make_response(jsonify(response_json))
+                return resp
             else:
                 abort(response.status_code, response.content)
         else:

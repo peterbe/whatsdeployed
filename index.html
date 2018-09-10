@@ -251,6 +251,11 @@ $ curl https://dev.example.com/deployed-version
       </div>
 
       <p id="cap" style="display:none" class="text-muted">Stopping as soon as all environments have a particular commit in common.</p>
+      <div id="max" style="display:none" class="alert alert-warning" role="alert">
+          Even after comparing the last <b>count</b> commits, a common denominator
+          could not be found! The difference is just too big.<br/>
+          Use the links below to compare directly on GitHub.
+      </div>
 
       <h5>Repo</h5>
       <p class="repo"></p>
