@@ -182,6 +182,13 @@ function start(deployments, owner, repo, tags) {
           .text(tag)
       );
     }
+    var date = commit.commit.committer.date;
+    cell.append(
+      $('<span class="badge badge-pill commit-date"></span>')
+        .attr('datetime', date)
+        .attr('title', date)
+        .text(timeago().format(date))
+    );
     return cell;
   }
 
@@ -238,6 +245,10 @@ function start(deployments, owner, repo, tags) {
           $('#cap').show();
         }
       });
+
+      // Keep all the .commit-date span tags fresh
+      timeago().render($('.commit-date'));
+
       if (keep_going) {
         $('#max .count').text(PER_PAGE);
         $('#max').show();
