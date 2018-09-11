@@ -1,3 +1,5 @@
+-c requirements-constraints.txt
+
 Flask==1.0.2 \
     --hash=sha256:2271c0070dbcb5275fad4a82e29f23ab92682dc45f9dfbc22c02ba9b9322ce48 \
     --hash=sha256:a080b744b7e345ccfcbc77954861cb05b3c63786e93f2b3875e0913d44b43f05
@@ -37,6 +39,6 @@ requests==2.19.1 \
     --hash=sha256:ec22d826a36ed72a7358ff3fe56cbd4ba69dd7a6718ffd450ff0e9df7a47ce6a
 python-decouple==3.1 \
     --hash=sha256:1317df14b43efee4337a4aa02914bf004f010cd56d6c4bd894e6474ec8c4fe2d
-python-dotenv==0.8.2 \
-    --hash=sha256:4965ed170bf51c347a89820e8050655e9c25db3837db6602e906b6d850fad85c \
-    --hash=sha256:509736185257111613009974e666568a1b031b028b61b500ef1ab4ee780089d5
+python-dotenv==0.9.1 \
+    --hash=sha256:122290a38ece9fe4f162dc7c95cae3357b983505830a154d3c98ef7f6c6cea77 \
+    --hash=sha256:4a205787bc829233de2a823aa328e44fd9996fedb954989a21f1fc67c13d7a77
