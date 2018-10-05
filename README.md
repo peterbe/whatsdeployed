@@ -30,7 +30,7 @@ Development
 -----------
 
 You can either do development with Docker (recommended) or with a plain
-Python `virtualenv`.
+Python `virtualenv` and `Yarn`.
 
 **Docker**
 
@@ -44,20 +44,34 @@ If it doesn't close properly when you `Ctrl-C` and you get the
 docker-compose stop
 ```
 
-Remember, if you change your `docker-compose.yml` or `requirements.txt`
-you can rebuild with:
+Remember, if you change your `docker-compose.yml`, `requirements.txt`, or
+`package.json` you can rebuild with:
 ```
 docker-compose build web
 ```
 
-**Virtualenv**
+**Virtualenv and Yarn**
+
+To install dependencies:
 
 ```
 pip install -r requirements.txt
+yarn install
+```
+
+To run the app, first start the backend:
+
+```
 DEBUG=1 SQLALCHEMY_DATABASE_URI='postgres:///whatsdeployed' ./app.py
 ```
 
-Then, go to http://localhost:5000/
+and then in a separate terminal, start the frontend:
+
+```
+yarn start
+```
+
+This will automatically open your browser to http://localhost:3000/
 
 To avoid hitting rate limits on GitHub's API you can go to
 [Personal access tokens](https://github.com/settings/tokens) and generate

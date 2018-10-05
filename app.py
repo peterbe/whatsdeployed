@@ -9,6 +9,7 @@ from urllib.parse import urlparse, urlencode
 from collections import defaultdict
 
 import requests
+import werkzeug
 from requests.exceptions import ReadTimeout
 from flask import (
     Flask,
@@ -18,6 +19,8 @@ from flask import (
     send_file,
     abort,
     redirect,
+    send_from_directory,
+    send_file,
 )
 from flask.views import MethodView
 from flask_sqlalchemy import SQLAlchemy
@@ -42,7 +45,8 @@ else:
         "GITHUB_AUTH_TOKEN is NOT available. Worry about rate limits."
     )
 
-app = Flask(__name__)
+# Set static_folder=None to suppress the standard static server
+app = Flask(__name__, static_folder=None)
 app.config['SQLALCHEMY_DATABASE_URI'] = config(
     'SQLALCHEMY_DATABASE_URI',
     'postgres://localhost/whatsdeployed'
@@ -68,10 +72,6 @@ class Shortlink(db.Model):
     def __repr__(self):
         return '<Shortlink %r>' % self.link
 
-
-@app.route('/')
-def index_html():
-    return send_file('index.html')
 
 
 def extract_sha(content):
@@ -328,7 +328,7 @@ class CulpritsView(MethodView):
 class ShortenView(MethodView):
 
     def post(self):
-        url = request.form['url']
+        url = request.json['url']
         qs = urlparse(url).query
         parsed = cgi.parse_qs(qs)
         owner = parsed['owner'][0]
@@ -466,6 +466,20 @@ app.add_url_rule(
 app.add_url_rule(
     '/s-<string:link>', view_func=ShortlinkRedirectView.as_view('shortlink')
 )
+
+@app.route('/', defaults={'path': 'index.html'})
+@app.route('/<path:path>')
+def index_html(path):
+    # try to serve static files out of ./build/
+    try:
+        return send_from_directory('build', path)
+    except werkzeug.exceptions.NotFound as e:
+        # try to serve index.html in the requested path
+        if path.endswith("/"):
+            return send_from_directory('build', path + 'index.html')
+        else:
+            # fall back to index.html
+            return send_file('build/index.html')
 
 
 if __name__ == '__main__':
