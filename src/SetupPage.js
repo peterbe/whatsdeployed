@@ -15,7 +15,7 @@ export default class SetupPage extends React.Component {
 
 class SetupForm extends React.Component {
   render() {
-    document.title = `What's deployed? (React)`;
+    document.title = `What's deployed?`;
 
     return (
       <form>

@@ -101,7 +101,7 @@ export default class DeployPage extends React.Component {
     const { owner, repo } = this.props;
     const { error, loading, deployInfo, commits, tags } = this.state;
 
-    document.title = `What's deployed on ${owner}/${repo}? (React)`;
+    document.title = `What's deployed on ${owner}/${repo}?`;
 
     if (error) {
       return <div className="alert alert-danger">{error.toString()}</div>;
