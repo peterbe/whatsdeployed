@@ -34,9 +34,9 @@ psycopg2-binary==2.7.5 \
 Flask-SQLAlchemy==2.3.2 \
     --hash=sha256:3bc0fac969dd8c0ace01b32060f0c729565293302f0c4269beed154b46bec50b \
     --hash=sha256:5971b9852b5888655f11db634e87725a9031e170f37c0ce7851cf83497f56e53
-requests==2.19.1 \
-    --hash=sha256:63b52e3c866428a224f97cab011de738c36aec0185aa91cfacd418b5d58911d1 \
-    --hash=sha256:ec22d826a36ed72a7358ff3fe56cbd4ba69dd7a6718ffd450ff0e9df7a47ce6a
+requests[security]==2.20.0 \
+    --hash=sha256:99dcfdaaeb17caf6e526f32b6a7b780461512ab3f1d992187801694cba42770c \
+    --hash=sha256:a84b8c9ab6239b578f22d1c21d51b696dcfe004032bb80ea832398d6909d7279
 python-decouple==3.1 \
     --hash=sha256:1317df14b43efee4337a4aa02914bf004f010cd56d6c4bd894e6474ec8c4fe2d
 python-dotenv==0.9.1 \
