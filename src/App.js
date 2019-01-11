@@ -1,10 +1,10 @@
 import React from 'react';
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './App.css';
 
 import SetupPage from './SetupPage.js';
 import DeployPage from './DeployPage.js';
+import './App.css';
 
 export default class App extends React.Component {
   render() {

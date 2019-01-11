@@ -1,11 +1,13 @@
 import React from 'react';
+import { withRouter } from 'react-router-dom';
+
 import shortUrls from './shortUrls';
 
 export default class SetupPage extends React.Component {
   render() {
     return (
       <div>
-        <SetupForm />
+        <SetupFormWithRouter />
         <PreviousEnvironments />
         <WhatIsIt />
       </div>
@@ -14,8 +16,68 @@ export default class SetupPage extends React.Component {
 }
 
 class SetupForm extends React.Component {
+  constructor(props) {
+    super(props);
+    this.onChange = this.onChange.bind(this);
+    this.addRow = this.addRow.bind(this);
+    this.submit = this.submit.bind(this);
+  }
+
+  state = {
+    owner: '',
+    repository: '',
+    rows: [
+      {
+        name: '',
+        url: ''
+      }
+    ]
+  };
+
+  onChange(ev) {
+    const { name, value } = ev.target;
+    this.setState({ [name]: value });
+  }
+
+  onRowChange(rowIdx, ev) {
+    const name = ev.target.name;
+    const value = ev.target.value;
+    this.setState(state => {
+      // replace an existing row without modifying any existing objects
+      let newRows = [...state.rows];
+      newRows[rowIdx][name] = value;
+      return { rows: newRows };
+    });
+  }
+
+  addRow() {
+    this.setState(({ rows }) => ({
+      rows: rows.concat([{ name: '', url: '' }])
+    }));
+  }
+
+  submit(ev) {
+    let newUrl = new URL(window.location);
+    const { history } = this.props;
+    const { owner, repository, rows } = this.state;
+    newUrl.searchParams.append('owner', owner);
+    newUrl.searchParams.append('repo', repository);
+    for (const { name, url } of rows) {
+      newUrl.searchParams.append('name[]', name);
+      newUrl.searchParams.append('url[]', url);
+    }
+    ev.preventDefault();
+    history.push({
+      pathname: newUrl.pathname,
+      search: newUrl.search,
+      hash: '',
+      state: null
+    });
+  }
+
   render() {
-    document.title = `What's deployed?`;
+    const { owner, repository, rows } = this.state;
+    document.title = "What's deployed?";
 
     return (
       <form>
@@ -25,62 +87,71 @@ class SetupForm extends React.Component {
             type="text"
             name="owner"
             className="form-control"
-            id="owner"
             placeholder="e.g. mozilla"
+            value={owner}
+            onChange={this.onChange}
           />
         </div>
         <div className="form-group">
           <label>Repository</label>
           <input
             type="text"
-            name="repo"
+            name="repository"
             className="form-control"
-            id="repo"
             placeholder="e.g. airmozilla"
+            value={repository}
+            onChange={this.onChange}
           />
         </div>
-        <div className="form-group revisions">
-          <label>Revision URLs</label>
-          <input
-            type="text"
-            name="name[]"
-            className="form-control name"
-            placeholder="e.g. Dev"
-          />
-          <input
-            type="text"
-            name="url[]"
-            className="form-control url"
-            placeholder="e.g. https://air-dev.allizom.org/media/revision or https://example.com/__version__"
-          />
-        </div>
+        <label>Revision URLs</label>
+        {rows.map(({ name, url }, index) => (
+          <div className="form-group revision" key={index}>
+            <input
+              type="text"
+              name="name"
+              className="form-control name"
+              placeholder="e.g. Dev"
+              value={name}
+              onChange={this.onRowChange.bind(this, index)}
+            />
+            <input
+              type="text"
+              name="url"
+              className="form-control url"
+              placeholder="e.g. https://air-dev.allizom.org/media/revision or https://example.com/__version__"
+              value={url}
+              onChange={this.onRowChange.bind(this, index)}
+            />
+          </div>
+        ))}
         <p>
-          <button type="button" className="btn btn-secondary more">
+          <button
+            type="button"
+            className="btn btn-secondary more"
+            onClick={this.addRow}
+          >
             Add Row
           </button>
         </p>
         <div>
-          <button className="btn btn-primary">
+          <button className="btn btn-primary" onClick={this.submit}>
             Generate <i>What's Deployed</i> Table
           </button>
-        </div>
-
-        <div id="previous" style={{ display: 'none' }}>
-          <h3>Previous Environments</h3>
-          <ul />
         </div>
       </form>
     );
   }
 }
 
+const SetupFormWithRouter = withRouter(SetupForm);
+
 class PreviousEnvironments extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       environments: [],
-      loading: false,
-    }
+      loading: false
+    };
   }
 
   async componentDidMount() {
@@ -92,27 +163,31 @@ class PreviousEnvironments extends React.Component {
   render() {
     const { environments, loading } = this.state;
     if (loading) {
-      return <div id="previous">
-        <h3>PreviousEnvironments</h3>
-        <span>...</span>
-      </div>
+      return (
+        <div id="previous">
+          <h3>PreviousEnvironments</h3>
+          <span>...</span>
+        </div>
+      );
     }
 
-    return <div id="previous">
-      <h3>PreviousEnvironments</h3>
-      <ul>
-        {environments.map(env => (
-          <li key={env.revisions[0]}>
-            <a href={env.url}>
-              {env.owner}/{env.repo}
-            </a>
-            <span className="names">
-              {env.revisions.map(r => r[0]).join(", ")}
-            </span>
-          </li>
-        ))}
-      </ul>
-    </div>
+    return (
+      <div id="previous">
+        <h3>PreviousEnvironments</h3>
+        <ul>
+          {environments.map(env => (
+            <li key={env.revisions[0]}>
+              <a href={env.url}>
+                {env.owner}/{env.repo}
+              </a>
+              <span className="names">
+                {env.revisions.map(r => r[0]).join(', ')}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
   }
 }
 

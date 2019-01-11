@@ -598,7 +598,6 @@ class BadgesAndUrls extends React.Component {
             </a>
             <button
               className="btn btn-link"
-              style={{ fontFamily: 'mono' }}
               onClick={this.toggleHelp}
             >
               {showHelp ? 'close' : 'help?'}
