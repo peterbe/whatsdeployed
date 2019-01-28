@@ -17,7 +17,9 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build"
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "test:ci": "CI=true yarn test"
   },
   "proxy": "http://localhost:5000",
   "eslintConfig": {
