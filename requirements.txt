@@ -42,3 +42,6 @@ python-decouple==3.1 \
 python-dotenv==0.9.1 \
     --hash=sha256:122290a38ece9fe4f162dc7c95cae3357b983505830a154d3c98ef7f6c6cea77 \
     --hash=sha256:4a205787bc829233de2a823aa328e44fd9996fedb954989a21f1fc67c13d7a77
+therapist==1.5.0 \
+    --hash=sha256:03f120c411f05e0fc6d95a6cbfb876b083a1fd854ddd22bb12eee05ef1670a31 \
+    --hash=sha256:58eada2a96d68d1df5d4b86450678528727e8e145f7edd2ec123b8618e8c14e4

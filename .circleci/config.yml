@@ -1,0 +1,125 @@
+# Javascript Node CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-javascript/ for more details
+#
+version: 2
+jobs:
+  test:
+    docker:
+      - image: circleci/node:10
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+
+      # Download and cache node dependencies
+      - restore_cache:
+          keys:
+            - v2-dependencies-{{ checksum "yarn.lock" }}
+            # fallback to using the latest cache if no exact match is found
+            - v2-dependencies-
+
+      - run:
+          name: Install node dependencies
+          command: yarn install
+
+      - save_cache:
+          paths:
+            - 'node_modules'
+          key: v2-dependencies-{{ checksum "yarn.lock" }}
+
+      # Run tests!
+      - run:
+          name: Test
+          command: yarn run test:ci
+
+  lint:
+    docker:
+      # Image with python 3.6 and node 8
+      - image: circleci/python:3.6-node-browsers
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+
+      # Download and cache python dependencies
+      - restore_cache:
+          key: v1-python
+
+      - run:
+          name: Create virtualenv
+          command: |
+            python3 -m venv ~/venv
+            echo "source ~/venv/bin/activate" >> $BASH_ENV
+
+      - run:
+          name: Install therapist
+          command: pip install -U therapist
+
+      - save_cache:
+          paths:
+            - '~/venv'
+          key: v1-python
+
+      # Download and cache node dependencies
+      - restore_cache:
+          keys:
+            - v2-dependencies-{{ checksum "yarn.lock" }}
+            # fallback to using the latest cache if no exact match is found
+            - v2-dependencies-
+
+      - run:
+          name: Install node dependencies
+          command: yarn install
+
+      - save_cache:
+          paths:
+            - 'node_modules'
+          key: v2-dependencies-{{ checksum "yarn.lock" }}
+
+      # Run lint suite using therapist
+      - run:
+          name: Lint
+          command: therapist run --use-tracked-files
+
+  build:
+    # Test that a production-build of the project works
+    docker:
+      - image: circleci/node:10
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+
+      # Download and cache node dependencies
+      - restore_cache:
+          keys:
+            # Include package.json in the keys, since moving between
+            # dependencies and devDependncies doesn't change yarn.lock.
+            - v2-dependencies-prod-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
+            # fallback to using the latest cache if no exact match is found
+            - v2-dependencies-prod-{{ checksum "package.json" }}-
+
+      - run:
+          name: Install node dependencies in production mode
+          command: yarn install --prod
+
+      - save_cache:
+          paths:
+            - 'node_modules'
+          key: v2-dependencies-prod-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
+
+      - run:
+          name: Build
+          command: yarn run build
+
+workflows:
+  version: 2
+  build_and_docs:
+    jobs:
+      - lint
+      - build
+      - test
