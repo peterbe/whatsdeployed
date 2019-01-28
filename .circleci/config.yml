@@ -55,8 +55,8 @@ jobs:
             echo "source ~/venv/bin/activate" >> $BASH_ENV
 
       - run:
-          name: Install therapist
-          command: pip install -U therapist
+          name: Install dev tools
+          command: pip install -r dev-requirements.txt
 
       - save_cache:
           paths:
