@@ -1,0 +1,146 @@
+body {
+  font-size: 1rem;
+}
+
+#error,
+#culprits-error {
+  display: none;
+  padding: 100px;
+  color: red;
+}
+
+td a {
+  padding-right: 5px;
+}
+
+#cloak {
+  padding: 100px 0;
+  height: 100%;
+  width: 100%;
+}
+
+#cloak p {
+  text-align: center;
+}
+
+a.resolved {
+  text-decoration: line-through !important;
+}
+
+#culprits {
+  margin-top: 60px;
+}
+
+#culprits h4 {
+  margin-top: 35px;
+}
+
+input.form-control.name {
+  margin-top: 10px;
+}
+
+a {
+  color: rgb(0, 123, 255);
+}
+
+td.checked {
+  /* background: url('/static/check.png') no-repeat; */
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAMCAYAAABr5z2BAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEwAACxMBAJqcGAAAAdFJREFUKJGVktFLU2EYxn/HnbHDSGONIKfeRcqYa6AyMFngTUwCRWhhV131D3jVbCqk5bUXuxGiEAoiHLguEu8KjBBiEIRhguAwDQnZkbHzfed8n1eTZQb6Xr3vA7+Hl+d94YLV86xnIr2Qfs0UTQDmReDEXCI3khrJ+vAFXM/1rU6tjvnOC8fn4rmh/qGsRltSSaM93B6t/Kr8PtkgNB6KudJ17Hl78zQcm4nlBnsHs1JJS3gCpRXlj+XF0nQpb9bh4VvDBa20WmLpbqNJdCaaG+gdyEqk5UgHrTW7n3ffLE8vPwTwhcZDsXR/utByueW6P+APt15tvbMT2VkRX8Sfrqddk8lEMus1eZbwBEIJ9tf33xUni2OABjCDZrDTMI0rVVlFowk2B2+kkqni1vOtlXg0/qhGzZJCYgubo9JRYW127X4dBjAAOp50ZPpu9uXNgBlWWqFQKK04qB6wV93jsHaI89V5a7+wHwBeYz5GvYk8jmS64915w2+Ey3aZ7co2NbcGgPqmCuqlygDu6YCNxqFtou1e5VJl3sa+diJu8J5XjALyrPP+9Qf2J/u76BQ/MbmNppkNPrDIKCDOgv8xAGCdH0TZxMVigQzg/A8GOAZSQcXE4Oz/qQAAAABJRU5ErkJggg==) no-repeat;
+  background-position: center;
+}
+
+.media-body h5 {
+  margin-bottom: 0;
+}
+
+
+.user-avatar-group {
+  vertical-align: middle;
+  width: 44px;
+  height: 44px;
+  margin-right: 6px;
+  padding: 0;
+  position: relative;
+  display: inline-block;
+}
+
+.user-avatar:first-child {
+  width: 44px;
+  height: 44px;
+}
+
+.user-avatar:not(:first-child) {
+  width: 22px;
+  height: 22px;
+  position: absolute;
+  bottom: 0;
+  right: -6px;
+}
+
+.user-avatar > img {
+  border-radius: 3px; /* this is what GitHub uses */
+  width: inherit;
+  height: inherit;
+}
+
+.user-avatar.unknown-user {
+  display: inline-block;
+  /* border: 1px solid black; */
+  background: #ccd;
+  border-radius: 3px; /* this is what GitHub uses */
+}
+
+.user-avatar.unknown-user::after {
+  content: "?";
+  line-height: 44px;
+  display: block;
+  text-align: center;
+  font-size: 1.5em;
+}
+
+#whatisit {
+  margin-top: 150px;
+}
+
+#previous {
+  margin-top: 50px;
+}
+
+#previous li .names {
+  margin-left: 10px;
+  font-size: 80%;
+  color: #666;
+}
+
+a.compare-url {
+  font-size: 80%;
+}
+
+.commit-date {
+  font-weight: normal;
+  color: #666;
+}
+
+footer {
+  margin-top: 40px;
+}
+
+.deployed-metadata {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.deployed-metadata > div {
+  flex: 1 0 50%;
+}
+
+.deployed-metadata > div.metadata-actions {
+  text-align: right;
+}
+
+th > .column-extra {
+  float: right;
+  font-weight: normal;
+  margin-right: 20px;
+}

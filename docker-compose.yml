@@ -16,5 +16,10 @@ services:
       - GITHUB_AUTH_TOKEN=${GITHUB_AUTH_TOKEN}
     ports:
       - "5000:5000"
+      - "3000:3000"
     volumes:
-      - $PWD:/app
+      - $PWD/app.py:/app/app.py
+      - $PWD/public:/app/public
+      - $PWD/src:/app/src
+    command: bash -c 'python app.py & PORT=3000 yarn start'
+    stop_signal: kill

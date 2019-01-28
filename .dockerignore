@@ -1,0 +1,12 @@
+.cache
+.direnv
+.env*
+.envrc
+.floo*
+.pytest_cache
+build
+node_modules
+pip-cache
+site-packages
+venv
+webpack-stats-actions.json
