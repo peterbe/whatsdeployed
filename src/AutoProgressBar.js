@@ -68,7 +68,7 @@ export default class AutoProgressBar extends React.Component {
         value={displayedProgress}
         max={1}
       >
-        {displayedProgress >= 0.99 && "This is taking a while..."}
+        {displayedProgress >= 0.99 && 'This is taking a while...'}
       </Progress>
     );
   }
