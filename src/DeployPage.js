@@ -447,8 +447,10 @@ class RepoSummary extends React.Component {
 
     return (
       <>
-        <h2>Repository Info</h2>
-        <a href={repoUrl}>{repoUrl}</a>
+        <h4>Repository Info</h4>
+        <p className="repo">
+          <a href={repoUrl}>{repoUrl}</a>
+        </p>
         <table className="table table-sm urls">
           <thead>
             <tr>
@@ -550,15 +552,17 @@ class Culprits extends React.Component {
 
     return (
       <>
-        <h2>Culprits</h2>
+        <h3 className="page-header culprits">Culprits</h3>
         {error && <div className="alert alert-danger">{error.toString()}</div>}
         {loading ? (
-          '...'
+          'loading culprits...'
         ) : (
           <div className="culprits">
             {culprits.map(group => (
               <div key={group.name} className="group">
-                <h3>On {group.name}</h3>
+                <h4>
+                  <span className="on-prefix">On</span> {group.name}
+                </h4>
                 {group.users.map(([role, user]) => (
                   <div key={`${role}:${user}`} className="media">
                     <a href={user.html_url}>
@@ -567,6 +571,7 @@ class Culprits extends React.Component {
                         alt={user.login}
                         width={44}
                         height={44}
+                        className="mr-3 avatar"
                       />
                     </a>
                     <div className="media-body">

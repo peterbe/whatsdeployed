@@ -27,11 +27,11 @@ a.resolved {
   text-decoration: line-through !important;
 }
 
-#culprits {
+.page-header.culprits {
   margin-top: 60px;
 }
 
-#culprits h4 {
+.culprits h4 {
   margin-top: 35px;
 }
 
