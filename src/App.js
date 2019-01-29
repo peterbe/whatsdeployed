@@ -1,43 +1,28 @@
 import React from 'react';
+import { BrowserRouter as Router, NavLink } from "react-router-dom";
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import SetupPage from './SetupPage.js';
-import DeployPage from './DeployPage.js';
+import Routes from "./Routes";
 import './App.css';
 
 export default class App extends React.Component {
   render() {
-    let content = <SetupPage />;
-
-    if (window.location.search) {
-      let url = new URL(window.location);
-      const names = url.searchParams.getAll('name[]');
-      const urls = url.searchParams.getAll('url[]');
-      const deployments = names.map((name, idx) => ({ name, url: urls[idx] }));
-
-      content = (
-        <DeployPage
-          owner={url.searchParams.get('owner')}
-          repo={url.searchParams.get('repo')}
-          deployments={deployments}
-        />
-      );
-    }
-
     return (
+    <Router>
       <div className="App container">
         <Header />
-        {content}
+        <Routes />
         <Footer />
       </div>
+  </Router>
     );
   }
 }
 
 class Header extends React.Component {
   render() {
-    return <h2 className="text-center">What's Deployed?</h2>;
+    return <h2 className="text-center"><NavLink to="/">What's Deployed?</NavLink></h2>;
   }
 }
 

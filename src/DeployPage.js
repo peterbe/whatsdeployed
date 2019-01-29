@@ -6,24 +6,21 @@ import classNames from 'classnames';
 
 import AutoProgressBar from './AutoProgressBar';
 import shortUrls from './shortUrls';
+import { withRouter } from './Routes';
 
 const BORS_LOGIN = 'bors[bot]';
 
-export default class DeployPage extends React.Component {
+class DeployPage extends React.Component {
   static propsTypes = {
-    owner: PropTypes.string.isRequired,
-    repo: PropTypes.string.isRequired,
-    deployments: PropTypes.arrayOf(
-      PropTypes.shape({
-        url: PropTypes.string.isRequired,
-        name: PropTypes.string.isRequired
-      })
-    ).isRequired
+    shortCode: PropTypes.string.isRequired,
   };
 
   constructor(props) {
     super(props);
     this.state = {
+      owner: null,
+      repo: null,
+      deployments: null,
       commits: null,
       deployInfo: null,
       error: null,
@@ -53,8 +50,22 @@ export default class DeployPage extends React.Component {
     this.setState(state => state.loading.delete(name));
   }
 
+  async decodeShortCode() {
+    const { match: { params: { code } } } = this.props;
+    this.startLoad("parameters");
+    try {
+      let { owner, repo, deployments } = await shortUrls.decode(code);
+      this.setState({ owner, repo, deployments });
+      this.fetchShas();
+      this.fetchCommits();
+      this.finishLoad("parameters");
+    } catch(error) {
+      this.setState({ error });
+    }
+  }
+
   async fetchShas() {
-    const { owner, repo, deployments } = this.props;
+    const { owner, repo, deployments } = this.state;
     this.startLoad('shas');
     try {
       const res = await ky
@@ -73,7 +84,7 @@ export default class DeployPage extends React.Component {
   }
 
   async fetchCommits() {
-    const { owner, repo } = this.props;
+    const { owner, repo } = this.state;
     this.startLoad('commits');
     try {
       const commitsUrl = new URL(window.location.origin);
@@ -92,14 +103,21 @@ export default class DeployPage extends React.Component {
     }
   }
 
+  update(props=this.props) {
+    this.decodeShortCode();
+  }
+
   componentDidMount() {
-    this.fetchShas();
-    this.fetchCommits();
+    this.update();
+  }
+
+  componentWillReceiveProps(newProps) {
+    this.update();
   }
 
   render() {
-    const { owner, repo } = this.props;
-    const { error, loading, deployInfo, commits, tags } = this.state;
+    const { match: { params: { code } } } = this.props;;
+    const { error, loading, deployInfo, commits, tags, owner, repo } = this.state;
 
     document.title = `What's deployed on ${owner}/${repo}?`;
 
@@ -107,22 +125,27 @@ export default class DeployPage extends React.Component {
       return <div className="alert alert-danger">{error.toString()}</div>;
     }
 
+
     if (this.isLoading()) {
       return (
         <div>
           <span>Loading {Array.from(loading || '...').join(' and ')}</span>
           <AutoProgressBar
             count={loading ? loading.size : 0}
-            total={2}
-            targetTime={3000}
+            total={3}
+            targetTime={5000}
           />
         </div>
       );
     }
 
+    if (!deployInfo) {
+      return <pre><code>{JSON.stringify({ props: this.props, state: this.state }, null, 4)}</code></pre>;
+    }
+
     return (
       <div>
-        <DeployTable deployInfo={deployInfo} commits={commits} tags={tags} />
+        <DeployTable deployInfo={deployInfo} commits={commits} tags={tags} shortUrl={`/s/${code}`} />
         <RepoSummary
           deployInfo={deployInfo}
           tags={tags}
@@ -134,6 +157,8 @@ export default class DeployPage extends React.Component {
     );
   }
 }
+
+export default withRouter(DeployPage);
 
 class DeployTable extends React.Component {
   static propTypes = {
@@ -156,7 +181,7 @@ class DeployTable extends React.Component {
   };
 
   render() {
-    const { deployInfo, commits, tags } = this.props;
+    const { deployInfo, commits, tags, shortUrl } = this.props;
     const { borsMode } = this.state;
 
     let hasBors = false;
@@ -255,7 +280,7 @@ class DeployTable extends React.Component {
               Use the links below to compare directly on GitHub.
             </div>
           )}
-          <BadgesAndUrls deployInfo={deployInfo} />
+          <BadgesAndUrls deployInfo={deployInfo} shortUrl={shortUrl} />
         </div>
       </>
     );
@@ -536,45 +561,17 @@ class Culprits extends React.Component {
 }
 
 class BadgesAndUrls extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { error: null, shortUrl: null, showHelp: false };
-  }
-
-  async componentDidMount() {
-    try {
-      const shortUrl = await shortUrls.fetchFor(window.location.href);
-      this.setState({ shortUrl });
-    } catch (error) {
-      this.setState({ error });
-    }
-  }
+  state = {
+    showHelp: false,
+  };
 
   toggleHelp = () => {
     this.setState(state => ({ showHelp: !state.showHelp }));
   };
 
   render() {
-    const { deployInfo } = this.props;
-    const { error, shortUrl, showHelp } = this.state;
-
-    if (error) {
-      return (
-        <div className="metadata-actions">
-          <span title={error.toString()} style={{ fontWeight: 'bold' }}>
-            ⚠
-          </span>
-        </div>
-      );
-    }
-
-    if (!shortUrl) {
-      return (
-        <div className="metadata-actions">
-          <span title="Loading...">...</span>
-        </div>
-      );
-    }
+    const { deployInfo, shortUrl } = this.props;
+    const { showHelp } = this.state;
 
     const { protocol, host } = window.location;
     const fullUrl = `${protocol}//${host}${shortUrl}`;
