@@ -14,6 +14,17 @@ const shortUrls = {
     return shortUrl;
   },
 
+  /** Get the long URL for a short URL. */
+  async decode(code) {
+    if (code.startsWith('s-')) {
+      code = code.slice(2);
+    }
+    const params = await ky
+      .get(`/lengthenit/${code}`)
+      .json();
+    return params;
+  },
+
   /** Get the metadata from the server for all shortUrls in the history. */
   async getAll() {
     if (!cache) {
@@ -64,6 +75,20 @@ const shortUrls = {
 
     cache = null;
     localStorage.setItem('shortUrls', JSON.stringify(history));
-  }
+  },
+
+  /** Build a long URL from parts */
+  buildLongUrl({ owner, repo, deployments }) {
+    let newUrl = new URL(window.location);
+    newUrl.pathName='/';
+    newUrl.search = '';
+    newUrl.searchParams.append('owner', owner);
+    newUrl.searchParams.append('repo', repo);
+    for (const { name, url } of deployments) {
+      newUrl.searchParams.append('name[]', name);
+      newUrl.searchParams.append('url[]', url);
+    }
+    return newUrl;
+  },
 };
 export default shortUrls;

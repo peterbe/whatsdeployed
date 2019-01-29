@@ -57,15 +57,9 @@ class SetupForm extends React.Component {
   }
 
   submit(ev) {
-    let newUrl = new URL(window.location);
     const { history } = this.props;
     const { owner, repository, rows } = this.state;
-    newUrl.searchParams.append('owner', owner);
-    newUrl.searchParams.append('repo', repository);
-    for (const { name, url } of rows) {
-      newUrl.searchParams.append('name[]', name);
-      newUrl.searchParams.append('url[]', url);
-    }
+    let newUrl = shortUrls.buildLongUrl({ owner, repo: repository, deployments: rows });
     ev.preventDefault();
     history.push({
       pathname: newUrl.pathname,

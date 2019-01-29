@@ -370,6 +370,23 @@ class ShortenView(MethodView):
         return make_response(jsonify({'url': new_url}))
 
 
+class LengthenView(MethodView):
+
+    def get(self, link):
+        shortlink = Shortlink.query.filter_by(link=link).first()
+        if shortlink is None:
+            abort(404)
+        response = {
+            'repo': shortlink.repo,
+            'owner': shortlink.owner,
+            'deployments': [],
+        }
+        for k, v in json.loads(shortlink.revisions):
+            response['deployments'].append({ 'name': k, 'url': v })
+        return make_response(jsonify(response))
+
+
+
 class ShortenedView(MethodView):
 
     def get(self):
@@ -458,6 +475,7 @@ class GitHubAPI(MethodView):
 app.add_url_rule('/shas', view_func=ShasView.as_view('shas'))
 app.add_url_rule('/culprits', view_func=CulpritsView.as_view('culprits'))
 app.add_url_rule('/shortenit', view_func=ShortenView.as_view('shortenit'))
+app.add_url_rule('/lengthenit/<string:link>', view_func=LengthenView.as_view('lengthenit'))
 app.add_url_rule('/shortened', view_func=ShortenedView.as_view('shortened'))
 app.add_url_rule(
     '/githubapi/<string:thing>',
