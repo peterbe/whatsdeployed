@@ -462,7 +462,15 @@ class RepoSummary extends React.Component {
           <tbody>
             {deployInfo.map(deployment => (
               <tr key={deployment.name}>
-                <td>{deployment.name}</td>
+                <td>
+                  <a
+                    href={deployment.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {deployment.name}
+                  </a>
+                </td>
                 <td>
                   <ShaLink
                     sha={deployment.sha}
