@@ -19,9 +19,7 @@ const shortUrls = {
     if (code.startsWith('s-')) {
       code = code.slice(2);
     }
-    const params = await ky
-      .get(`/lengthenit/${code}`)
-      .json();
+    const params = await ky.get(`/lengthenit/${code}`).json();
     return params;
   },
 
@@ -80,7 +78,7 @@ const shortUrls = {
   /** Build a long URL from parts */
   buildLongUrl({ owner, repo, deployments }) {
     let newUrl = new URL(window.location);
-    newUrl.pathName='/';
+    newUrl.pathName = '/';
     newUrl.search = '';
     newUrl.searchParams.append('owner', owner);
     newUrl.searchParams.append('repo', repo);
@@ -89,6 +87,6 @@ const shortUrls = {
       newUrl.searchParams.append('url[]', url);
     }
     return newUrl;
-  },
+  }
 };
 export default shortUrls;

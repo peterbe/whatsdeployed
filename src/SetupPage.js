@@ -59,7 +59,11 @@ class SetupForm extends React.Component {
   submit(ev) {
     const { history } = this.props;
     const { owner, repository, rows } = this.state;
-    let newUrl = shortUrls.buildLongUrl({ owner, repo: repository, deployments: rows });
+    let newUrl = shortUrls.buildLongUrl({
+      owner,
+      repo: repository,
+      deployments: rows
+    });
     ev.preventDefault();
     history.push({
       pathname: newUrl.pathname,

@@ -1,4 +1,4 @@
-FROM python:3.5-slim
+FROM python:3.6-slim
 
 WORKDIR /app/
 RUN groupadd --gid 10001 app && useradd -g app --uid 10001 --shell /usr/sbin/nologin app

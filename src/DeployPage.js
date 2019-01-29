@@ -12,7 +12,7 @@ const BORS_LOGIN = 'bors[bot]';
 
 class DeployPage extends React.Component {
   static propsTypes = {
-    shortCode: PropTypes.string.isRequired,
+    shortCode: PropTypes.string.isRequired
   };
 
   constructor(props) {
@@ -51,15 +51,19 @@ class DeployPage extends React.Component {
   }
 
   async decodeShortCode() {
-    const { match: { params: { code } } } = this.props;
-    this.startLoad("parameters");
+    const {
+      match: {
+        params: { code }
+      }
+    } = this.props;
+    this.startLoad('parameters');
     try {
       let { owner, repo, deployments } = await shortUrls.decode(code);
       this.setState({ owner, repo, deployments });
       this.fetchShas();
       this.fetchCommits();
-      this.finishLoad("parameters");
-    } catch(error) {
+      this.finishLoad('parameters');
+    } catch (error) {
       this.setState({ error });
     }
   }
@@ -103,7 +107,7 @@ class DeployPage extends React.Component {
     }
   }
 
-  update(props=this.props) {
+  update(props = this.props) {
     this.decodeShortCode();
   }
 
@@ -116,15 +120,26 @@ class DeployPage extends React.Component {
   }
 
   render() {
-    const { match: { params: { code } } } = this.props;;
-    const { error, loading, deployInfo, commits, tags, owner, repo } = this.state;
+    const {
+      match: {
+        params: { code }
+      }
+    } = this.props;
+    const {
+      error,
+      loading,
+      deployInfo,
+      commits,
+      tags,
+      owner,
+      repo
+    } = this.state;
 
     document.title = `What's deployed on ${owner}/${repo}?`;
 
     if (error) {
       return <div className="alert alert-danger">{error.toString()}</div>;
     }
-
 
     if (this.isLoading()) {
       return (
@@ -140,12 +155,23 @@ class DeployPage extends React.Component {
     }
 
     if (!deployInfo) {
-      return <pre><code>{JSON.stringify({ props: this.props, state: this.state }, null, 4)}</code></pre>;
+      return (
+        <pre>
+          <code>
+            {JSON.stringify({ props: this.props, state: this.state }, null, 4)}
+          </code>
+        </pre>
+      );
     }
 
     return (
       <div>
-        <DeployTable deployInfo={deployInfo} commits={commits} tags={tags} shortUrl={`/s/${code}`} />
+        <DeployTable
+          deployInfo={deployInfo}
+          commits={commits}
+          tags={tags}
+          shortUrl={`/s/${code}`}
+        />
         <RepoSummary
           deployInfo={deployInfo}
           tags={tags}
@@ -562,7 +588,7 @@ class Culprits extends React.Component {
 
 class BadgesAndUrls extends React.Component {
   state = {
-    showHelp: false,
+    showHelp: false
   };
 
   toggleHelp = () => {
@@ -593,10 +619,7 @@ class BadgesAndUrls extends React.Component {
             <a href={shortUrl}>
               <img alt={badgeAlt} title={badgeAlt} src={badgeUrl} />
             </a>
-            <button
-              className="btn btn-link"
-              onClick={this.toggleHelp}
-            >
+            <button className="btn btn-link" onClick={this.toggleHelp}>
               {showHelp ? 'close' : 'help?'}
             </button>
           </div>

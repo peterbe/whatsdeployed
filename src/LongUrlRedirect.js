@@ -7,8 +7,8 @@ import { withRouter } from './Routes';
 
 class LongUrlRedirect extends React.Component {
   state = {
-    error: null,
-  }
+    error: null
+  };
 
   static propsTypes = {
     owner: PropTypes.string,
@@ -40,10 +40,10 @@ class LongUrlRedirect extends React.Component {
         pathname: `/s/${code}`,
         search: '',
         hash: '',
-        state: null,
+        state: null
       });
     } catch (error) {
-      this.setState({ error })
+      this.setState({ error });
     }
   }
 
@@ -68,11 +68,7 @@ class LongUrlRedirect extends React.Component {
     return (
       <div>
         <span>Loading parameters</span>
-        <AutoProgressBar
-          count={0}
-          total={3}
-          targetTime={5000}
-        />
+        <AutoProgressBar count={0} total={3} targetTime={5000} />
       </div>
     );
   }
