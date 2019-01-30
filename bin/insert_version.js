@@ -19,5 +19,5 @@ Object.entries(data).forEach(([key, value]) => {
 });
 tag = tag.trim() + '/>';
 
-const newHtml = html.replace(/<div id="_version" [^>]+>/, tag);
-fs.writeFileSync(htmlFile, newHtml, 'utf8');
+html = html.replace(/<div id="_version" [^>]+>/, tag);
+fs.writeFileSync(htmlFile, html, 'utf8');
