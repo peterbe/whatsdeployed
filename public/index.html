@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>What's deployed?</title>
+    <title>What's Deployed?</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -21,6 +21,14 @@
       You need to enable JavaScript to run this app.
     </noscript>
     <div id="root"></div>
+
+    <!--
+      This is a sample so it works in dev.
+      The insert_version build script will put in real values in here
+      so that the React app can pick it up without needing an XHR to read
+      the contents of the build version.json.
+    -->
+    <div id="_version" data-commit="83fda0eaddc444719a9833bc4a6a33cd2ea49fd9" data-date="2018-10-17T21:29:12-04:00"/>
+
   </body>
 </html>
-

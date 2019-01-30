@@ -31,6 +31,10 @@ class Header extends React.Component {
 
 class Footer extends React.Component {
   render() {
+    const versionData = Object.assign(
+      {},
+      document.querySelector('#_version').dataset
+    );
     return (
       <footer>
         <p>
@@ -41,6 +45,15 @@ class Footer extends React.Component {
           &bull;{' '}
           <a href="https://github.com/peterbe/whatsdeployed/issues/new">
             problems?
+          </a>{' '}
+          &bull;{' '}
+          <a
+            href={`https://github.com/peterbe/whatsdeployed/commit/${
+              versionData.commit
+            }`}
+            title={`Date: ${versionData.date}`}
+          >
+            version <code>{versionData.commit.slice(0, 7)}</code>
           </a>
         </p>
       </footer>
