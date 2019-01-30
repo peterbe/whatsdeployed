@@ -152,10 +152,16 @@ class PreviousEnvironments extends React.Component {
     };
   }
 
+  componentWillUnmount() {
+    this.dismounted = true;
+  }
+
   async componentDidMount() {
     this.setState({ loading: true });
     const environments = await shortUrls.getAll();
-    this.setState({ environments, loading: false });
+    if (!this.dismounted) {
+      this.setState({ environments, loading: false });
+    }
   }
 
   render() {
