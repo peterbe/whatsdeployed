@@ -26,35 +26,13 @@ by [IcoCentre](https://www.iconfinder.com/konekierto).
 
 ## Development
 
-You can either do development with Docker (recommended) or with a plain
-Python `virtualenv` and `Yarn`.
-
-**Docker**
-
-```
-docker-compose up web
-```
-
-If it doesn't close properly when you `Ctrl-C` and you get the
-"ERROR: Aborting" warning message. Type:
-
-```
-docker-compose stop
-```
-
-Remember, if you change your `docker-compose.yml`, `requirements.txt`, or
-`package.json` you can rebuild with:
-
-```
-docker-compose build web
-```
-
-**Virtualenv and Yarn**
+Development requires both Python 3.6 or higher for the backed, and JS for the
+front end.
 
 To install dependencies:
 
 ```
-pip install -r requirements.txt -r dev-requirements.txt
+pip install -r dev-requirements.txt
 yarn install
 ```
 
@@ -82,8 +60,15 @@ export GITHUB_AUTH_TOKEN=afefdf213840aeb8007310ab05fc33eda51a0652
 
 **Environment variables**
 
-If either way you use Docker or Virtualenv you _can_ put all your
-environment variables into a `.env` file.
+You can put all your environment variables into a `.env` file, like this:
+
+```
+GITHUB_AUTH_TOKEN=afefdf213840aeb8007310ab05fc33eda51a0652
+DEBUG=1
+SQLALCHEMY_DATABASE_URI='postgres:///whatsdeployed'
+```
+
+This file will automatically be read when running the Python backend.
 
 ## Deployment
 
