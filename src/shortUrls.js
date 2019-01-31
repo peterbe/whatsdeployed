@@ -1,4 +1,4 @@
-import ky from 'ky';
+import ky from 'ky/umd';
 
 let maxHistory = 5;
 let history;

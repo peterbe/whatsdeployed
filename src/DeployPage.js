@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import ky from 'ky';
+import ky from 'ky/umd';
 import TimeAgo from 'react-timeago';
 import classNames from 'classnames';
 
