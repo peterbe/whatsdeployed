@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, NavLink } from 'react-router-dom';
+import { BrowserRouter as Router, Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import Routes from './Routes';
@@ -23,7 +23,7 @@ class Header extends React.Component {
   render() {
     return (
       <h2 className="text-center">
-        <NavLink to="/">What's Deployed?</NavLink>
+        <Link to="/">What's Deployed?</Link>
       </h2>
     );
   }
