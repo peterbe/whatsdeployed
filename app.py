@@ -326,22 +326,12 @@ class ShortenedView(MethodView):
         environments = []
         shortlinks = Shortlink.query.filter(Shortlink.link.in_(ids)).all()
         for shortlink in shortlinks:
-            qs = {
-                "repo": shortlink.repo,
-                "owner": shortlink.owner,
-                "name[]": [],
-                "url[]": [],
-            }
-            for k, v in json.loads(shortlink.revisions):
-                qs["name[]"].append(k)
-                qs["url[]"].append(v)
-            url = "/?" + urlencode(qs, True)
             environments.append(
                 {
+                    "shortlink": shortlink.link,
                     "owner": shortlink.owner,
                     "repo": shortlink.repo,
                     "revisions": json.loads(shortlink.revisions),
-                    "url": url,
                 }
             )
 

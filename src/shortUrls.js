@@ -72,6 +72,7 @@ const shortUrls = {
     }
 
     cache = null;
+    console.log('REMEMBER THIS:', history);
     localStorage.setItem('shortUrls', JSON.stringify(history));
   },
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 
 import shortUrls from './shortUrls';
 
@@ -144,13 +144,10 @@ class SetupForm extends React.Component {
 const SetupFormWithRouter = withRouter(SetupForm);
 
 class PreviousEnvironments extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      environments: [],
-      loading: false
-    };
-  }
+  state = {
+    environments: [],
+    loading: false
+  };
 
   componentWillUnmount() {
     this.dismounted = true;
@@ -177,13 +174,13 @@ class PreviousEnvironments extends React.Component {
 
     return (
       <div id="previous">
-        <h3>PreviousEnvironments</h3>
+        <h3>Previous Environments</h3>
         <ul>
           {environments.map(env => (
             <li key={env.revisions[0]}>
-              <a href={env.url}>
+              <Link to={`/s/${env.shortlink}`}>
                 {env.owner}/{env.repo}
-              </a>
+              </Link>
               <span className="names">
                 {env.revisions.map(r => r[0]).join(', ')}
               </span>
