@@ -177,7 +177,7 @@ class PreviousEnvironments extends React.Component {
         <h3>Previous Environments</h3>
         <ul>
           {environments.map(env => (
-            <li key={env.revisions[0]}>
+            <li key={env.shortlink}>
               <Link to={`/s/${env.shortlink}`}>
                 {env.owner}/{env.repo}
               </Link>
