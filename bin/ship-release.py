@@ -105,9 +105,9 @@ def run(*args):
     with open("build.zip", "rb") as f:
         payload = f.read()
     response = requests.post(upload_url, headers=headers, data=payload)
-    # print(response)
     response.raise_for_status()
-    print("💥", response.json()["html_url"])
+    # print("💥Done!", response.json()["html_url"])
+    print("💥Done!", response.json())
 
 
 if __name__ == "__main__":
