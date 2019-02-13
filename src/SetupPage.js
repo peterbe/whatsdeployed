@@ -2,6 +2,7 @@ import React from 'react';
 import { withRouter, Link } from 'react-router-dom';
 
 import shortUrls from './shortUrls';
+import { EllipsisLoading } from './Common';
 
 export default class SetupPage extends React.Component {
   render() {
@@ -184,29 +185,6 @@ class PreviousEnvironments extends React.Component {
         )}
       </div>
     );
-  }
-}
-
-class EllipsisLoading extends React.PureComponent {
-  state = { dots: 0 };
-  static defaultProps = {
-    text: 'Loading',
-    animationMs: 400,
-    maxDots: 5
-  };
-  componentDidMount() {
-    this.interval = window.setInterval(() => {
-      this.setState(state => {
-        return { dots: (state.dots + 1) % this.props.maxDots };
-      });
-    }, this.props.animationMs);
-  }
-  componentWillUnmount() {
-    window.clearInterval(this.interval);
-  }
-  render() {
-    let dots = '.'.repeat(this.state.dots + 1);
-    return `${this.props.text}${dots}`;
   }
 }
 
