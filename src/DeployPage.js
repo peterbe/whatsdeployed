@@ -531,15 +531,12 @@ class ShaLink extends React.Component {
   }
 }
 
-class Culprits extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      loading: true,
-      culprits: null,
-      error: null
-    };
-  }
+class Culprits extends React.PureComponent {
+  state = {
+    loading: true,
+    culprits: null,
+    error: null
+  };
 
   componentDidMount() {
     this.fetchCulprits();
@@ -550,25 +547,29 @@ class Culprits extends React.Component {
     this.setState({ loading: true });
 
     try {
-      const { culprits } = await ky
+      const res = await ky
         .post('/culprits', { json: { owner, repo, deployments: deployInfo } })
         .json();
-      this.setState({ loading: false, culprits });
+      if (res.error) {
+        this.setState({ error: res.error });
+      } else {
+        this.setState({ culprits: res.culprits });
+      }
     } catch (error) {
       this.setState({ error });
+    } finally {
+      this.setState({ loading: false });
     }
   }
 
   render() {
     const { loading, culprits, error } = this.state;
-
     return (
       <>
         <h3 className="page-header culprits">Culprits</h3>
         {error && <div className="alert alert-danger">{error.toString()}</div>}
-        {loading ? (
-          'loading culprits...'
-        ) : (
+        {loading && 'loading culprits...'}
+        {culprits && (
           <div className="culprits">
             {culprits.map(group => (
               <div key={group.name} className="group">
