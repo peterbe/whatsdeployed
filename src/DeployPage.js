@@ -7,6 +7,7 @@ import classNames from 'classnames';
 import AutoProgressBar from './AutoProgressBar';
 import shortUrls from './shortUrls';
 import { withRouter } from './Routes';
+import { EllipsisLoading } from './Common';
 
 const BORS_LOGIN = 'bors[bot]';
 
@@ -561,7 +562,7 @@ class Culprits extends React.PureComponent {
       <>
         <h3 className="page-header culprits">Culprits</h3>
         {error && <div className="alert alert-danger">{error.toString()}</div>}
-        {loading && 'loading culprits...'}
+        {loading && <EllipsisLoading text="loading culprits" />}
         {culprits && (
           <div className="culprits">
             {culprits.map(group => (
