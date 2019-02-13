@@ -33,7 +33,7 @@ def _download(url):
 def cli(tag_name=None, verbose=False, destination=None):
     destination = destination or "."
     if not tag_name:
-        tag_name = _check_output("git tag".split())
+        tag_name = _check_output("git tag".split()).splitlines()[0]
     assert tag_name
 
     for release in _download(URL):
