@@ -391,7 +391,7 @@ class CommitDetails extends React.Component {
 
     return (
       <td>
-        <UserAvatar users={involvedUsers} />
+        <UserAvatars users={involvedUsers} />
         <a className="commit" href={html_url} title={commit.message}>
           {title}
         </a>
@@ -410,37 +410,30 @@ class CommitDetails extends React.Component {
   }
 }
 
-class UserAvatar extends React.Component {
-  render() {
-    const { users } = this.props;
-
-    if (users.every(u => !u)) {
-    }
-
-    return (
-      <div className="user-avatar-group">
-        {users.map(user => {
-          if (!user) {
-            return (
-              <span className="user-avatar unknown-user" title="Unknown User" />
-            );
-          } else {
-            const { html_url, login, avatar_url } = user;
-            return (
-              <a
-                key={login}
-                className="user-avatar"
-                href={html_url}
-                title={login}
-              >
-                <img src={avatar_url} alt={login} />
-              </a>
-            );
-          }
-        })}
-      </div>
-    );
-  }
+function UserAvatars({ users }) {
+  return (
+    <div className="user-avatar-group">
+      {users.map(user => {
+        if (!user) {
+          return (
+            <span className="user-avatar unknown-user" title="Unknown User" />
+          );
+        } else {
+          const { html_url, login, avatar_url } = user;
+          return (
+            <a
+              key={login}
+              className="user-avatar"
+              href={html_url}
+              title={login}
+            >
+              <img src={avatar_url} alt={login} />
+            </a>
+          );
+        }
+      })}
+    </div>
+  );
 }
 
 class RepoSummary extends React.Component {
