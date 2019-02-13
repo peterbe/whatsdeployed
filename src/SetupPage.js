@@ -163,32 +163,50 @@ class PreviousEnvironments extends React.Component {
 
   render() {
     const { environments, loading } = this.state;
-    if (loading) {
-      return (
-        <div id="previous">
-          <h3>PreviousEnvironments</h3>
-          <span>...</span>
-        </div>
-      );
-    }
-
     return (
       <div id="previous">
         <h3>Previous Environments</h3>
-        <ul>
-          {environments.map(env => (
-            <li key={env.shortlink}>
-              <Link to={`/s/${env.shortlink}`}>
-                {env.owner}/{env.repo}
-              </Link>
-              <span className="names">
-                {env.revisions.map(r => r[0]).join(', ')}
-              </span>
-            </li>
-          ))}
-        </ul>
+        {loading ? (
+          <EllipsisLoading />
+        ) : (
+          <ul>
+            {environments.map(env => (
+              <li key={env.shortlink}>
+                <Link to={`/s/${env.shortlink}`}>
+                  {env.owner}/{env.repo}
+                </Link>
+                <span className="names">
+                  {env.revisions.map(r => r[0]).join(', ')}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     );
+  }
+}
+
+class EllipsisLoading extends React.PureComponent {
+  state = { dots: 0 };
+  static defaultProps = {
+    text: 'Loading',
+    animationMs: 400,
+    maxDots: 5
+  };
+  componentDidMount() {
+    this.interval = window.setInterval(() => {
+      this.setState(state => {
+        return { dots: (state.dots + 1) % this.props.maxDots };
+      });
+    }, this.props.animationMs);
+  }
+  componentWillUnmount() {
+    window.clearInterval(this.interval);
+  }
+  render() {
+    let dots = '.'.repeat(this.state.dots + 1);
+    return `${this.props.text}${dots}`;
   }
 }
 
@@ -197,7 +215,7 @@ class WhatIsIt extends React.Component {
     return (
       <div id="whatisit">
         <h3>
-          What Is <b>What's Deployed</b>?
+          What Is <b>What's Deployed</b>?{' '}
           <small className="text-muted">Primer on what's in front of you</small>
         </h3>
         <p>
