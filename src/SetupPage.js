@@ -219,12 +219,11 @@ class WhatIsIt extends React.Component {
           contains a top-level key called <code>commit</code>. For example:
         </p>
         <pre>
-          $ curl https://dev.example.com/deployed-version.txt
-          d16cc25d58252a2b7e6bb394cbefa76b147d64d3
+          {`$ curl https://dev.example.com/deployed-version.txt\nd16cc25d58252a2b7e6bb394cbefa76b147d64d3`}
         </pre>
         <p>Or, if it's JSON:</p>
         <pre>
-          {`$ curl https://dev.example.com/deployed-version {"commit": "d16cc25d58252a2b7e6bb394cbefa76b147d64d3", "other": "stuff"}`}
+          {`$ curl https://dev.example.com/deployed-version\n{"commit": "d16cc25d58252a2b7e6bb394cbefa76b147d64d3", "other": "stuff"}`}
         </pre>
         <p>
           Once you've typed in the GitHub organization, GitHub repository and at
@@ -236,7 +235,7 @@ class WhatIsIt extends React.Component {
         <ul>
           <li>
             <a
-              href="https://whatsdeployed.io/s-5HY"
+              href="https://whatsdeployed.io/s/5HY"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -245,7 +244,7 @@ class WhatIsIt extends React.Component {
           </li>
           <li>
             <a
-              href="https://whatsdeployed.io/s-Sir"
+              href="https://whatsdeployed.io/s/Sir"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -254,7 +253,7 @@ class WhatIsIt extends React.Component {
           </li>
           <li>
             <a
-              href="https://whatsdeployed.io/s-pdF"
+              href="https://whatsdeployed.io/s/pdF"
               target="_blank"
               rel="noopener noreferrer"
             >
