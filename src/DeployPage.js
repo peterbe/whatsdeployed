@@ -76,11 +76,17 @@ class DeployPage extends React.Component {
         .post('/shas', { json: { owner, repo, deployments } })
         .json();
 
-      this.setState({
-        deployInfo: res.deployments,
-        tags: res.tags
-      });
+      if (res.error) {
+        this.setState({ error: res.error });
+      } else {
+        this.setState({
+          deployInfo: res.deployments,
+          tags: res.tags
+        });
+      }
     } catch (error) {
+      console.warn('Error fetching shas!');
+      console.error(error);
       this.setState({ error });
     } finally {
       this.finishLoad('shas');
@@ -135,7 +141,7 @@ class DeployPage extends React.Component {
       repo
     } = this.state;
 
-    document.title = `What's deployed on ${owner}/${repo}?`;
+    document.title = `What's Deployed on ${owner}/${repo}?`;
 
     if (error) {
       return <div className="alert alert-danger">{error.toString()}</div>;
@@ -156,11 +162,9 @@ class DeployPage extends React.Component {
 
     if (!deployInfo) {
       return (
-        <pre>
-          <code>
-            {JSON.stringify({ props: this.props, state: this.state }, null, 4)}
-          </code>
-        </pre>
+        <div className="alert alert-danger">
+          No Deployment info could be found
+        </div>
       );
     }
 
