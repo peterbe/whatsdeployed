@@ -144,46 +144,45 @@ class DeployPage extends React.Component {
 
     document.title = `What's Deployed on ${owner}/${repo}?`;
 
-    if (error) {
-      return <div className="alert alert-danger">{error.toString()}</div>;
-    }
-
-    if (this.isLoading()) {
-      return (
-        <div>
-          <span>Loading {Array.from(loading || '...').join(' and ')}</span>
-          <AutoProgressBar
-            count={loading ? loading.size : 0}
-            total={3}
-            targetTime={5000}
-          />
-        </div>
-      );
-    }
-
-    if (!deployInfo) {
-      return (
-        <div className="alert alert-danger">
-          No Deployment info could be found
-        </div>
-      );
-    }
-
     return (
       <div>
-        <DeployTable
-          deployInfo={deployInfo}
-          commits={commits}
-          tags={tags}
-          shortUrl={`/s/${code}`}
-        />
-        <RepoSummary
-          deployInfo={deployInfo}
-          tags={tags}
-          owner={owner}
-          repo={repo}
-        />
-        <Culprits deployInfo={deployInfo} owner={owner} repo={repo} />
+        <h2 className="text-center">
+          What's Deployed
+          {owner && repo && ` on ${owner}/${repo}`}?
+        </h2>
+        {error && <div className="alert alert-danger">{error.toString()}</div>}
+        {this.isLoading() ? (
+          <>
+            <span>Loading {Array.from(loading || '...').join(' and ')}</span>
+            <AutoProgressBar
+              count={loading ? loading.size : 0}
+              total={3}
+              targetTime={5000}
+            />
+          </>
+        ) : (
+          <>
+            {!deployInfo && (
+              <div className="alert alert-danger">
+                No Deployment info could be found
+              </div>
+            )}
+
+            <DeployTable
+              deployInfo={deployInfo}
+              commits={commits}
+              tags={tags}
+              shortUrl={`/s/${code}`}
+            />
+            <RepoSummary
+              deployInfo={deployInfo}
+              tags={tags}
+              owner={owner}
+              repo={repo}
+            />
+            <Culprits deployInfo={deployInfo} owner={owner} repo={repo} />
+          </>
+        )}
       </div>
     );
   }
