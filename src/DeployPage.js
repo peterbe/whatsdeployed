@@ -16,19 +16,16 @@ class DeployPage extends React.Component {
     shortCode: PropTypes.string.isRequired
   };
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      owner: null,
-      repo: null,
-      deployments: null,
-      commits: null,
-      deployInfo: null,
-      error: null,
-      loading: null,
-      tags: null
-    };
-  }
+  state = {
+    owner: null,
+    repo: null,
+    deployments: null,
+    commits: null,
+    deployInfo: null,
+    error: null,
+    loading: null,
+    tags: null
+  };
 
   isLoading() {
     if (this.state.loading === null) {
@@ -53,14 +50,20 @@ class DeployPage extends React.Component {
 
   async decodeShortCode() {
     const {
+      history,
+      location,
       match: {
-        params: { code }
+        params,
       }
     } = this.props;
     this.startLoad('parameters');
     try {
-      let { owner, repo, deployments } = await shortUrls.decode(code);
+      let { owner, repo, deployments } = await shortUrls.decode(params.code);
       this.setState({ owner, repo, deployments });
+      if (params.owner !== owner || params.repo !== repo) {
+        history.replace(`/s/${params.code}/${owner}/${repo}`);
+      }
+
       this.fetchShas();
       this.fetchCommits();
       this.finishLoad('parameters');
@@ -160,14 +163,12 @@ class DeployPage extends React.Component {
               targetTime={5000}
             />
           </>
+        ) : !deployInfo ? (
+          <div className="alert alert-danger">
+            No Deployment info could be found
+          </div>
         ) : (
           <>
-            {!deployInfo && (
-              <div className="alert alert-danger">
-                No Deployment info could be found
-              </div>
-            )}
-
             <DeployTable
               deployInfo={deployInfo}
               commits={commits}
