@@ -182,7 +182,7 @@ class DeployPage extends React.Component {
               deployInfo={deployInfo}
               commits={commits}
               tags={tags}
-              shortUrl={`/s/${code}`}
+              code={code}
             />
             <RepoSummary
               deployInfo={deployInfo}
@@ -206,22 +206,40 @@ class DeployTable extends React.Component {
       PropTypes.shape({ name: PropTypes.string.isRequired })
     ).isRequired,
     commits: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
-    tags: PropTypes.object.isRequired
+    tags: PropTypes.object.isRequired,
+    code: PropTypes.string.isRequired
+  };
+  static prefBorsModeCacheKey = 'pref-bors-mode';
+
+  getDefaultBorsMode = () => {
+    const prefs = JSON.parse(
+      localStorage.getItem(this.prefBorsModeCacheKey) || '{}'
+    );
+    return !!prefs[this.props.code];
   };
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      borsMode: false
-    };
-  }
+  state = {
+    borsMode: this.getDefaultBorsMode()
+  };
 
   handleBorsCheckbox = ev => {
-    this.setState({ borsMode: ev.target.checked });
+    this.setState(
+      { borsMode: ev.target.checked },
+      this._persistBorsModeChoices
+    );
+  };
+
+  _persistBorsModeChoices = () => {
+    const prefs = JSON.parse(
+      localStorage.getItem(this.prefBorsModeCacheKey) || '{}'
+    );
+    prefs[this.props.code] = this.state.borsMode;
+    localStorage.setItem(this.prefBorsModeCacheKey, JSON.stringify(prefs));
   };
 
   render() {
-    const { deployInfo, commits, tags, shortUrl } = this.props;
+    const { deployInfo, commits, tags, code } = this.props;
+    const shortUrl = `/s/${code}`;
     const { borsMode } = this.state;
 
     let hasBors = false;
