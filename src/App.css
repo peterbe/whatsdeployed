@@ -145,3 +145,7 @@ th > .column-extra {
   font-weight: normal;
   margin-right: 20px;
 }
+
+h2 .reponame {
+  color: #666;
+}

@@ -51,10 +51,7 @@ class DeployPage extends React.Component {
   async decodeShortCode() {
     const {
       history,
-      location,
-      match: {
-        params,
-      }
+      match: { params }
     } = this.props;
     this.startLoad('parameters');
     try {
@@ -151,7 +148,19 @@ class DeployPage extends React.Component {
       <div>
         <h2 className="text-center">
           What's Deployed
-          {owner && repo && ` on ${owner}/${repo}`}?
+          {owner && repo && (
+            <span>
+              {' '}
+              on{' '}
+              <a
+                href={`https://github.com/${owner}/${repo}`}
+                className="reponame"
+              >
+                {owner}/{repo}
+              </a>
+            </span>
+          )}
+          ?
         </h2>
         {error && <div className="alert alert-danger">{error.toString()}</div>}
         {this.isLoading() ? (
