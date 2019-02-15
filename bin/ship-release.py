@@ -106,8 +106,7 @@ def run(*args):
         payload = f.read()
     response = requests.post(upload_url, headers=headers, data=payload)
     response.raise_for_status()
-    # print("💥Done!", response.json()["html_url"])
-    print("💥Done!", response.json())
+    print("💥Done!", response.json()["browser_download_url"])
 
 
 if __name__ == "__main__":
