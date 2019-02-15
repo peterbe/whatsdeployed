@@ -33,7 +33,17 @@ def _download(url):
 def cli(tag_name=None, verbose=False, destination=None):
     destination = destination or "."
     if not tag_name:
-        tag_name = _check_output("git tag".split()).splitlines()[0]
+        tag_name = _check_output(
+            [
+                "git",
+                "for-each-ref",
+                "--sort=-taggerdate",
+                "--count=1",
+                "--format",
+                "%(tag)",
+                "refs/tags",
+            ]
+        )
     assert tag_name
 
     for release in _download(URL):
