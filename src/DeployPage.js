@@ -224,7 +224,7 @@ class DeployTable extends React.Component {
 
     const usersByLogin = new Map();
     for (const commit of commits) {
-      if (usersByLogin.has(commit.author.login)) {
+      if (!commit.author || usersByLogin.has(commit.author.login)) {
         continue;
       }
       usersByLogin.set(commit.author.login, commit.author);
