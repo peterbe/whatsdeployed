@@ -533,25 +533,38 @@ class Culprits extends React.PureComponent {
   };
 
   componentDidMount() {
+    this.controller = new AbortController();
     this.fetchCulprits();
+  }
+
+  componentWillUnmount() {
+    this.controller.abort();
+    this.dismounted = true;
   }
 
   async fetchCulprits() {
     const { owner, repo, deployInfo } = this.props;
     this.setState({ loading: true });
 
+    const { signal } = this.controller;
     try {
       const res = await ky
-        .post('/culprits', { json: { owner, repo, deployments: deployInfo } })
+        .post('/culprits', {
+          signal,
+          json: { owner, repo, deployments: deployInfo }
+        })
         .json();
+      if (this.dismounted) return;
       if (res.error) {
         this.setState({ error: res.error });
       } else {
         this.setState({ culprits: res.culprits });
       }
     } catch (error) {
+      if (this.dismounted) return;
       this.setState({ error });
     } finally {
+      if (this.dismounted) return;
       this.setState({ loading: false });
     }
   }
