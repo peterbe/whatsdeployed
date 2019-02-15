@@ -18,6 +18,7 @@ const Routes = withRouter(({ location }) => {
   return (
     <Switch>
       <Redirect from="/s-:code(.*)" to="/s/:code" />
+      <Route path="/s/:code/:owner/:repo" component={DeployPage} />
       <Route path="/s/:code" component={DeployPage} />
       <Route path="/" exact component={SetupPage} />
     </Switch>

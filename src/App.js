@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Link } from 'react-router-dom';
+import { BrowserRouter as Router } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import Routes from './Routes';
@@ -10,21 +10,10 @@ export default class App extends React.Component {
     return (
       <Router>
         <div className="App container">
-          <Header />
           <Routes />
           <Footer />
         </div>
       </Router>
-    );
-  }
-}
-
-class Header extends React.Component {
-  render() {
-    return (
-      <h2 className="text-center">
-        <Link to="/">What's Deployed?</Link>
-      </h2>
     );
   }
 }

@@ -16,19 +16,16 @@ class DeployPage extends React.Component {
     shortCode: PropTypes.string.isRequired
   };
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      owner: null,
-      repo: null,
-      deployments: null,
-      commits: null,
-      deployInfo: null,
-      error: null,
-      loading: null,
-      tags: null
-    };
-  }
+  state = {
+    owner: null,
+    repo: null,
+    deployments: null,
+    commits: null,
+    deployInfo: null,
+    error: null,
+    loading: null,
+    tags: null
+  };
 
   isLoading() {
     if (this.state.loading === null) {
@@ -53,14 +50,17 @@ class DeployPage extends React.Component {
 
   async decodeShortCode() {
     const {
-      match: {
-        params: { code }
-      }
+      history,
+      match: { params }
     } = this.props;
     this.startLoad('parameters');
     try {
-      let { owner, repo, deployments } = await shortUrls.decode(code);
+      let { owner, repo, deployments } = await shortUrls.decode(params.code);
       this.setState({ owner, repo, deployments });
+      if (params.owner !== owner || params.repo !== repo) {
+        history.replace(`/s/${params.code}/${owner}/${repo}`);
+      }
+
       this.fetchShas();
       this.fetchCommits();
       this.finishLoad('parameters');
@@ -144,46 +144,55 @@ class DeployPage extends React.Component {
 
     document.title = `What's Deployed on ${owner}/${repo}?`;
 
-    if (error) {
-      return <div className="alert alert-danger">{error.toString()}</div>;
-    }
-
-    if (this.isLoading()) {
-      return (
-        <div>
-          <span>Loading {Array.from(loading || '...').join(' and ')}</span>
-          <AutoProgressBar
-            count={loading ? loading.size : 0}
-            total={3}
-            targetTime={5000}
-          />
-        </div>
-      );
-    }
-
-    if (!deployInfo) {
-      return (
-        <div className="alert alert-danger">
-          No Deployment info could be found
-        </div>
-      );
-    }
-
     return (
       <div>
-        <DeployTable
-          deployInfo={deployInfo}
-          commits={commits}
-          tags={tags}
-          shortUrl={`/s/${code}`}
-        />
-        <RepoSummary
-          deployInfo={deployInfo}
-          tags={tags}
-          owner={owner}
-          repo={repo}
-        />
-        <Culprits deployInfo={deployInfo} owner={owner} repo={repo} />
+        <h2 className="text-center">
+          What's Deployed
+          {owner && repo && (
+            <span>
+              {' '}
+              on{' '}
+              <a
+                href={`https://github.com/${owner}/${repo}`}
+                className="reponame"
+              >
+                {owner}/{repo}
+              </a>
+            </span>
+          )}
+          ?
+        </h2>
+        {error && <div className="alert alert-danger">{error.toString()}</div>}
+        {this.isLoading() ? (
+          <>
+            <span>Loading {Array.from(loading || '...').join(' and ')}</span>
+            <AutoProgressBar
+              count={loading ? loading.size : 0}
+              total={3}
+              targetTime={5000}
+            />
+          </>
+        ) : !deployInfo ? (
+          <div className="alert alert-danger">
+            No Deployment info could be found
+          </div>
+        ) : (
+          <>
+            <DeployTable
+              deployInfo={deployInfo}
+              commits={commits}
+              tags={tags}
+              shortUrl={`/s/${code}`}
+            />
+            <RepoSummary
+              deployInfo={deployInfo}
+              tags={tags}
+              owner={owner}
+              repo={repo}
+            />
+            <Culprits deployInfo={deployInfo} owner={owner} repo={repo} />
+          </>
+        )}
       </div>
     );
   }

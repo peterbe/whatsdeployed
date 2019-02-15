@@ -8,6 +8,7 @@ export default class SetupPage extends React.Component {
   render() {
     return (
       <div>
+        <h2 className="text-center">What's Deployed</h2>
         <SetupFormWithRouter />
         <PreviousEnvironments />
         <WhatIsIt />
@@ -76,7 +77,7 @@ class SetupForm extends React.Component {
 
   render() {
     const { owner, repository, rows } = this.state;
-    document.title = "What's deployed?";
+    document.title = "What's Deployed?";
 
     return (
       <form>
@@ -173,7 +174,7 @@ class PreviousEnvironments extends React.Component {
           <ul>
             {environments.map(env => (
               <li key={env.shortlink}>
-                <Link to={`/s/${env.shortlink}`}>
+                <Link to={`/s/${env.shortlink}/${env.owner}/${env.repo}`}>
                   {env.owner}/{env.repo}
                 </Link>
                 <span className="names">

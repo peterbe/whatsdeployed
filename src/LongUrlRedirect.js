@@ -59,7 +59,7 @@ class LongUrlRedirect extends React.Component {
     const { owner, repo } = this.props;
     const { error } = this.state;
 
-    document.title = `What's deployed on ${owner}/${repo}?`;
+    document.title = `What's Deployed on ${owner}/${repo}?`;
 
     if (error) {
       return <div className="alert alert-danger">{error.toString()}</div>;
