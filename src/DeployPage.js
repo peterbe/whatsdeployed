@@ -211,25 +211,28 @@ class DeployTable extends React.Component {
   };
   static prefBorsModeCacheKey = 'pref-bors-mode';
 
-  getDefaultBorsMode = () => {
+  state = {
+    borsMode: false
+  };
+
+  componentDidMount() {
+    console.log('MOUNTED', this.props.code);
+    this._restoreBorsModeChoice();
+    // return !!prefs[this.props.code];
+  }
+
+  handleBorsCheckbox = ev => {
+    this.setState({ borsMode: ev.target.checked }, this._persistBorsModeChoice);
+  };
+
+  _restoreBorsModeChoice = () => {
     const prefs = JSON.parse(
       localStorage.getItem(this.prefBorsModeCacheKey) || '{}'
     );
-    return !!prefs[this.props.code];
+    console.log('SET?', this.props.code in prefs);
   };
 
-  state = {
-    borsMode: this.getDefaultBorsMode()
-  };
-
-  handleBorsCheckbox = ev => {
-    this.setState(
-      { borsMode: ev.target.checked },
-      this._persistBorsModeChoices
-    );
-  };
-
-  _persistBorsModeChoices = () => {
+  _persistBorsModeChoice = () => {
     const prefs = JSON.parse(
       localStorage.getItem(this.prefBorsModeCacheKey) || '{}'
     );
