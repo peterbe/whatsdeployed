@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import ky from 'ky/umd';
 import TimeAgo from 'react-timeago';
 import classNames from 'classnames';
+import { Link } from 'react-router-dom';
 
 import AutoProgressBar from './AutoProgressBar';
 import shortUrls from './shortUrls';
@@ -153,7 +154,7 @@ class DeployPage extends React.Component {
     return (
       <div>
         <h2 className="text-center">
-          What's Deployed
+          <Link to="/">What's Deployed</Link>{' '}
           {owner && repo && (
             <span>
               {' '}
@@ -226,9 +227,7 @@ class DeployTable extends React.Component {
   };
 
   componentDidMount() {
-    console.log('MOUNTED', this.props.code);
     this._restoreBorsModeChoice();
-    // return !!prefs[this.props.code];
   }
 
   handleBorsCheckbox = ev => {
@@ -239,7 +238,12 @@ class DeployTable extends React.Component {
     const prefs = JSON.parse(
       localStorage.getItem(this.prefBorsModeCacheKey) || '{}'
     );
-    console.log('SET?', this.props.code in prefs);
+    if (
+      this.props.code in prefs &&
+      prefs[this.props.code] !== this.state.borsMode
+    ) {
+      this.setState({ borsMode: prefs[this.props.code] });
+    }
   };
 
   _persistBorsModeChoice = () => {
