@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import ky from 'ky/umd';
 import TimeAgo from 'react-timeago';
 import classNames from 'classnames';
+import { Link } from 'react-router-dom';
 
 import AutoProgressBar from './AutoProgressBar';
 import shortUrls from './shortUrls';
@@ -153,7 +154,7 @@ class DeployPage extends React.Component {
     return (
       <div>
         <h2 className="text-center">
-          What's Deployed
+          <Link to="/">What's Deployed</Link>{' '}
           {owner && repo && (
             <span>
               {' '}
@@ -188,7 +189,7 @@ class DeployPage extends React.Component {
               deployInfo={deployInfo}
               commits={commits}
               tags={tags}
-              shortUrl={`/s/${code}`}
+              code={code}
               owner={owner}
               repo={repo}
             />
@@ -215,23 +216,48 @@ class DeployTable extends React.Component {
     ).isRequired,
     commits: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
     tags: PropTypes.object.isRequired,
+    code: PropTypes.string.isRequired,
     owner: PropTypes.string.isRequired,
     repo: PropTypes.string.isRequired
   };
+  static prefBorsModeCacheKey = 'pref-bors-mode';
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      borsMode: false
-    };
+  state = {
+    borsMode: false
+  };
+
+  componentDidMount() {
+    this._restoreBorsModeChoice();
   }
 
   handleBorsCheckbox = ev => {
-    this.setState({ borsMode: ev.target.checked });
+    this.setState({ borsMode: ev.target.checked }, this._persistBorsModeChoice);
+  };
+
+  _restoreBorsModeChoice = () => {
+    const prefs = JSON.parse(
+      localStorage.getItem(this.prefBorsModeCacheKey) || '{}'
+    );
+    if (
+      this.props.code in prefs &&
+      prefs[this.props.code] !== this.state.borsMode
+    ) {
+      this.setState({ borsMode: prefs[this.props.code] });
+    }
+  };
+
+  _persistBorsModeChoice = () => {
+    const prefs = JSON.parse(
+      localStorage.getItem(this.prefBorsModeCacheKey) || '{}'
+    );
+    prefs[this.props.code] = this.state.borsMode;
+    localStorage.setItem(this.prefBorsModeCacheKey, JSON.stringify(prefs));
   };
 
   render() {
-    const { deployInfo, commits, tags, owner, repo, shortUrl } = this.props;
+    const { deployInfo, commits, tags, owner, repo, code } = this.props;
+    const shortUrl = `/s/${code}`;
+
     const { borsMode } = this.state;
 
     let hasBors = false;
