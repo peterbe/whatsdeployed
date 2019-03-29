@@ -11,6 +11,12 @@ import { EllipsisLoading } from './Common';
 
 const BORS_LOGIN = 'bors[bot]';
 
+function makeTagAbsoluteUrl(owner, repo, tag) {
+  return `https://github.com/${owner}/${repo}/releases/tag/${encodeURIComponent(
+    tag
+  )}`;
+}
+
 class DeployPage extends React.Component {
   static propsTypes = {
     shortCode: PropTypes.string.isRequired
@@ -183,6 +189,8 @@ class DeployPage extends React.Component {
               commits={commits}
               tags={tags}
               code={code}
+              owner={owner}
+              repo={repo}
             />
             <RepoSummary
               deployInfo={deployInfo}
@@ -207,7 +215,9 @@ class DeployTable extends React.Component {
     ).isRequired,
     commits: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
     tags: PropTypes.object.isRequired,
-    code: PropTypes.string.isRequired
+    code: PropTypes.string.isRequired,
+    owner: PropTypes.string.isRequired,
+    repo: PropTypes.string.isRequired
   };
   static prefBorsModeCacheKey = 'pref-bors-mode';
 
@@ -241,8 +251,9 @@ class DeployTable extends React.Component {
   };
 
   render() {
-    const { deployInfo, commits, tags, code } = this.props;
+    const { deployInfo, commits, tags, owner, repo, code } = this.props;
     const shortUrl = `/s/${code}`;
+
     const { borsMode } = this.state;
 
     let hasBors = false;
@@ -285,6 +296,8 @@ class DeployTable extends React.Component {
             tag={tags[commit.sha]}
             users={usersByLogin}
             borsMode={borsMode}
+            owner={owner}
+            repo={repo}
           />
           {deployInfo.map(deploy => (
             <td
@@ -358,6 +371,8 @@ class CommitDetails extends React.Component {
       html_url: PropTypes.string.isRequired
     }),
     html_url: PropTypes.string.isRequired,
+    owner: PropTypes.string.isRequired,
+    repo: PropTypes.string.isRequired,
     tag: PropTypes.any
   };
 
@@ -403,7 +418,7 @@ class CommitDetails extends React.Component {
   }
 
   render() {
-    let { commit, author, tag, html_url, borsMode } = this.props;
+    let { commit, author, tag, html_url, borsMode, owner, repo } = this.props;
 
     let involvedUsers = [author];
 
@@ -427,9 +442,13 @@ class CommitDetails extends React.Component {
           {title}
         </a>
         {tag && (
-          <span className="badge badge-pill badge-info" title={`Tag: ${tag}`}>
+          <a
+            href={makeTagAbsoluteUrl(owner, repo, tag)}
+            className="badge badge-pill badge-info"
+            title={`Tag: ${tag}`}
+          >
             {tag}
-          </span>
+          </a>
         )}
         {commit.date}
         <TimeAgo
@@ -468,6 +487,15 @@ function UserAvatars({ users }) {
 }
 
 class RepoSummary extends React.Component {
+  static propTypes = {
+    deployInfo: PropTypes.arrayOf(
+      PropTypes.shape({ name: PropTypes.string.isRequired })
+    ).isRequired,
+    owner: PropTypes.string.isRequired,
+    repo: PropTypes.string.isRequired,
+    tags: PropTypes.object.isRequired
+  };
+
   render() {
     const { deployInfo, tags, owner, repo } = this.props;
 
@@ -546,9 +574,13 @@ class ShaLink extends React.Component {
           {sha.slice(0, 7)}
         </a>
         {tag && (
-          <span className="badge badge-pill badge-info" title={`Tag: ${tag}`}>
+          <a
+            href={makeTagAbsoluteUrl(owner, repo, tag)}
+            className="badge badge-pill badge-info"
+            title={`Tag: ${tag}`}
+          >
             {tag}
-          </span>
+          </a>
         )}
       </>
     );
