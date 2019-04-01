@@ -4,6 +4,7 @@ import ky from 'ky/umd';
 import TimeAgo from 'react-timeago';
 import classNames from 'classnames';
 import { Link } from 'react-router-dom';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 import AutoProgressBar from './AutoProgressBar';
 import shortUrls from './shortUrls';
@@ -358,7 +359,12 @@ class DeployTable extends React.Component {
               Use the links below to compare directly on GitHub.
             </div>
           )}
-          <BadgesAndUrls deployInfo={deployInfo} shortUrl={shortUrl} />
+          <BadgesAndUrls
+            deployInfo={deployInfo}
+            shortUrl={shortUrl}
+            owner={owner}
+            repo={repo}
+          />
         </div>
       </>
     );
@@ -679,19 +685,51 @@ class Culprits extends React.PureComponent {
 
 class BadgesAndUrls extends React.Component {
   state = {
-    showHelp: false
+    showHelp: false,
+    textCopied: ''
   };
+
+  componentWillUnmount() {
+    this.dismounted = true;
+  }
 
   toggleHelp = () => {
     this.setState(state => ({ showHelp: !state.showHelp }));
   };
 
+  copiedText = textCopied => {
+    this.setState({ textCopied }, () => {
+      window.setTimeout(() => {
+        if (!this.dismounted) {
+          this.setState({ textCopied: '' });
+        }
+      }, 4 * 1000);
+    });
+  };
+
+  showCopyToClipboard = text => {
+    return (
+      <CopyToClipboard text={text} onCopy={() => this.copiedText(text)}>
+        <small>
+          <button
+            className="btn btn-outline-secondary btn-sm"
+            disabled={text === this.state.textCopied}
+          >
+            {text === this.state.textCopied
+              ? 'Copied to clipboard'
+              : 'Copy to clipboard'}
+          </button>
+        </small>
+      </CopyToClipboard>
+    );
+  };
+
   render() {
-    const { deployInfo, shortUrl } = this.props;
+    const { deployInfo, shortUrl, owner, repo } = this.props;
     const { showHelp } = this.state;
 
     const { protocol, host } = window.location;
-    const fullUrl = `${protocol}//${host}${shortUrl}`;
+    const fullUrl = `${protocol}//${host}${shortUrl}/${owner}/${repo}`;
     const envs = deployInfo.map(deploy => deploy.name.toLowerCase()).join(',');
     const badgeUrl = `https://img.shields.io/badge/whatsdeployed-${envs}-green.svg`;
     const badgeAlt = `What's deployed on ${envs}?`;
@@ -720,21 +758,19 @@ class BadgesAndUrls extends React.Component {
           <div>
             <h3>Badge Help</h3>
             <dl>
-              <dt>Image URL</dt>
+              <dt>Image URL {this.showCopyToClipboard(badgeUrl)}</dt>
               <dd>
-                <code>{badgeUrl}</code>
+                <pre>{badgeUrl}</pre>
               </dd>
-              <dt>Markdown</dt>
+              <dt>Markdown {this.showCopyToClipboard(markdown)}</dt>
               <dd>
-                <pre>
-                  <code>{markdown}</code>
-                </pre>
+                <pre>{markdown}</pre>
               </dd>
-              <dt>ReStructuredText</dt>
+              <dt>
+                ReStructuredText {this.showCopyToClipboard(restructuredText)}
+              </dt>
               <dd>
-                <pre>
-                  <code>{restructuredText}</code>
-                </pre>
+                <pre>{restructuredText}</pre>
               </dd>
             </dl>
           </div>
