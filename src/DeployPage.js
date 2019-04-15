@@ -434,7 +434,10 @@ class CommitDetails extends React.Component {
   render() {
     let { commit, author, tag, html_url, borsMode, owner, repo } = this.props;
 
-    let involvedUsers = [author];
+    let involvedUsers = [];
+    if (author) {
+      involvedUsers.push(author);
+    }
 
     let title;
     if (borsMode && author.login === BORS_LOGIN && author.type === 'Bot') {
@@ -660,7 +663,7 @@ class Culprits extends React.PureComponent {
                   <span className="on-prefix">On</span> {group.name}
                 </h4>
                 {group.users.map(([role, user]) => (
-                  <div key={`${role}:${user}`} className="media">
+                  <div key={`${role}:${user.login}`} className="media">
                     <a href={user.html_url}>
                       <img
                         src={user.avatar_url}
