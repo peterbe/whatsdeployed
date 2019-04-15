@@ -31,7 +31,6 @@ jobs:
           command: yarn run test:ci
 
       - run:
-          name: yarn audit
           command: yarn audit
 
   lint:
