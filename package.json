@@ -5,14 +5,14 @@
   "dependencies": {
     "bootstrap": "4.3.1",
     "classnames": "2.2.6",
-    "ky": "0.9.0",
+    "ky": "0.9.1",
     "react": "16.8.6",
     "react-copy-to-clipboard": "5.0.1",
     "react-dom": "16.8.6",
     "react-router-dom": "5.0.0",
     "react-scripts": "2.1.8",
     "react-timeago": "4.4.0",
-    "reactstrap": "7.1.0"
+    "reactstrap": "8.0.0"
   },
   "scripts": {
     "analyze": "source-map-explorer build/static/js/main.*",
@@ -32,7 +32,7 @@
     "not op_mini all"
   ],
   "devDependencies": {
-    "prettier": "1.16.4",
+    "prettier": "1.17.0",
     "source-map-explorer": "1.8.0"
   }
 }
