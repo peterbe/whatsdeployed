@@ -288,7 +288,11 @@ class DeployTable extends React.Component {
         }
       }
 
-      if (commit.author.login === BORS_LOGIN && commit.author.type === 'Bot') {
+      if (
+        commit.author &&
+        commit.author.login === BORS_LOGIN &&
+        commit.author.type === 'Bot'
+      ) {
         hasBors = true;
       } else if (borsMode) {
         continue;
