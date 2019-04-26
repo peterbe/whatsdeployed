@@ -387,6 +387,24 @@ class GitHubAPI(MethodView):
             abort(400)
 
 
+class HealthCheckView(MethodView):
+    """A dumb but comprehensive health check"""
+
+    def get(self):
+        # Can't really test anything because it might empty on first ever load.
+        Shortlink.query.count()
+
+        # If you attempt to include Authorization headers, even on an endpoint
+        # that doesn't need it, it will 401 if the auth token is wrong.
+        response = requests.get(
+            "https://api.github.com/",
+            headers=GITHUB_REQUEST_HEADERS,
+            timeout=GITHUB_REQUEST_TIMEOUT,
+        )
+        response.raise_for_status()
+        return "OK\n"
+
+
 app.add_url_rule("/shas", view_func=ShasView.as_view("shas"))
 app.add_url_rule("/culprits", view_func=CulpritsView.as_view("culprits"))
 app.add_url_rule("/shortenit", view_func=ShortenView.as_view("shortenit"))
@@ -398,6 +416,7 @@ app.add_url_rule("/githubapi/<string:thing>", view_func=GitHubAPI.as_view("githu
 app.add_url_rule(
     "/s-<string:link>", view_func=ShortlinkRedirectView.as_view("shortlink")
 )
+app.add_url_rule("/__healthcheck__", view_func=HealthCheckView.as_view("healthcheck"))
 
 
 @app.route("/", defaults={"path": "index.html"})
