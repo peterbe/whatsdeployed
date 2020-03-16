@@ -12,7 +12,7 @@
     "react-router-dom": "5.0.0",
     "react-scripts": "3.0.0",
     "react-timeago": "4.4.0",
-    "reactstrap": "8.0.0"
+    "reactstrap": "8.4.1"
   },
   "devDependencies": {
     "prettier": "1.17.0",
