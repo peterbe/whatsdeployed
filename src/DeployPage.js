@@ -561,9 +561,7 @@ class RepoSummary extends React.Component {
                     return (
                       <td key={`${deployment.name}...${otherDeployment.name}`}>
                         <a
-                          href={`${repoUrl}/compare/${deployment.sha}...${
-                            otherDeployment.sha
-                          }`}
+                          href={`${repoUrl}/compare/${deployment.sha}...${otherDeployment.sha}`}
                         >
                           Compare <b>{deployment.name}</b> ↔{' '}
                           <b>{otherDeployment.name}</b>
