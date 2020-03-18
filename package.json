@@ -28,7 +28,8 @@
     "eslint-utils": ">=1.4.1",
     "serialize-javascript": ">=2.1.1",
     "kind-of": ">=6.0.3",
-    "acorn": ">=5.7.4"
+    "acorn": ">=5.7.4",
+    "minimist": ">=1.2.3"
   },
   "scripts": {
     "analyze": "source-map-explorer build/static/js/main.*",
