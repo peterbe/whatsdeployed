@@ -16,7 +16,7 @@
   },
   "devDependencies": {
     "prettier": "1.19.1",
-    "source-map-explorer": "2.4.0"
+    "source-map-explorer": "2.4.1"
   },
   "resolutions": {
     "braces": ">=2.3.1",
