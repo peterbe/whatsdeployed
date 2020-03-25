@@ -7,7 +7,7 @@ import { withRouter } from './Routes';
 
 class LongUrlRedirect extends React.Component {
   state = {
-    error: null
+    error: null,
   };
 
   static propsTypes = {
@@ -16,9 +16,9 @@ class LongUrlRedirect extends React.Component {
     deployments: PropTypes.arrayOf(
       PropTypes.shape({
         url: PropTypes.string.isRequired,
-        name: PropTypes.string.isRequired
+        name: PropTypes.string.isRequired,
       })
-    )
+    ),
   };
 
   async shorten(props = this.props) {
@@ -40,7 +40,7 @@ class LongUrlRedirect extends React.Component {
         pathname: `/s/${code}`,
         search: '',
         hash: '',
-        state: null
+        state: null,
       });
     } catch (error) {
       this.setState({ error });

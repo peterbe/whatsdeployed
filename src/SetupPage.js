@@ -31,9 +31,9 @@ class SetupForm extends React.Component {
     rows: [
       {
         name: '',
-        url: ''
-      }
-    ]
+        url: '',
+      },
+    ],
   };
 
   onChange(ev) {
@@ -44,7 +44,7 @@ class SetupForm extends React.Component {
   onRowChange(rowIdx, ev) {
     const name = ev.target.name;
     const value = ev.target.value;
-    this.setState(state => {
+    this.setState((state) => {
       // replace an existing row without modifying any existing objects
       let newRows = [...state.rows];
       newRows[rowIdx][name] = value;
@@ -54,7 +54,7 @@ class SetupForm extends React.Component {
 
   addRow() {
     this.setState(({ rows }) => ({
-      rows: rows.concat([{ name: '', url: '' }])
+      rows: rows.concat([{ name: '', url: '' }]),
     }));
   }
 
@@ -64,14 +64,14 @@ class SetupForm extends React.Component {
     let newUrl = shortUrls.buildLongUrl({
       owner,
       repo: repository,
-      deployments: rows
+      deployments: rows,
     });
     ev.preventDefault();
     history.push({
       pathname: newUrl.pathname,
       search: newUrl.search,
       hash: '',
-      state: null
+      state: null,
     });
   }
 
@@ -148,7 +148,7 @@ const SetupFormWithRouter = withRouter(SetupForm);
 class PreviousEnvironments extends React.Component {
   state = {
     environments: [],
-    loading: false
+    loading: false,
   };
 
   componentWillUnmount() {
@@ -172,13 +172,13 @@ class PreviousEnvironments extends React.Component {
           <EllipsisLoading />
         ) : (
           <ul>
-            {environments.map(env => (
+            {environments.map((env) => (
               <li key={env.shortlink}>
                 <Link to={`/s/${env.shortlink}/${env.owner}/${env.repo}`}>
                   {env.owner}/{env.repo}
                 </Link>
                 <span className="names">
-                  {env.revisions.map(r => r[0]).join(', ')}
+                  {env.revisions.map((r) => r[0]).join(', ')}
                 </span>
               </li>
             ))}

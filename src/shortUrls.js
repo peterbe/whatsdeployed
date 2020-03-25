@@ -87,6 +87,6 @@ const shortUrls = {
       newUrl.searchParams.append('url[]', url);
     }
     return newUrl;
-  }
+  },
 };
 export default shortUrls;

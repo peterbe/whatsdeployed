@@ -8,19 +8,19 @@ export default class AutoProgressBar extends React.Component {
     total: PropTypes.number,
     targetTime: PropTypes.number,
     auto: PropTypes.bool,
-    autoTickRate: PropTypes.number
+    autoTickRate: PropTypes.number,
   };
 
   static defaultProps = {
     targetTime: 5000,
     auto: true,
-    autoTickRate: 100
+    autoTickRate: 100,
   };
 
   constructor(props) {
     super(props);
     this.state = {
-      autoCounter: 0
+      autoCounter: 0,
     };
     this.interval = null;
   }
@@ -36,7 +36,7 @@ export default class AutoProgressBar extends React.Component {
 
   tick() {
     const { autoTickRate, targetTime } = this.props;
-    this.setState(state => {
+    this.setState((state) => {
       const next = state.autoCounter + autoTickRate;
       if (next > targetTime) {
         clearInterval(this.interval);

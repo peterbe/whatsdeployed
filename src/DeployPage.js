@@ -21,7 +21,7 @@ function makeTagAbsoluteUrl(owner, repo, tag) {
 
 class DeployPage extends React.Component {
   static propsTypes = {
-    shortCode: PropTypes.string.isRequired
+    shortCode: PropTypes.string.isRequired,
   };
 
   state = {
@@ -32,7 +32,7 @@ class DeployPage extends React.Component {
     deployInfo: null,
     error: null,
     loading: null,
-    tags: null
+    tags: null,
   };
 
   isLoading() {
@@ -53,13 +53,13 @@ class DeployPage extends React.Component {
   }
 
   finishLoad(name) {
-    this.setState(state => state.loading.delete(name));
+    this.setState((state) => state.loading.delete(name));
   }
 
   async decodeShortCode() {
     const {
       history,
-      match: { params }
+      match: { params },
     } = this.props;
     this.startLoad('parameters');
     try {
@@ -90,7 +90,7 @@ class DeployPage extends React.Component {
       } else {
         this.setState({
           deployInfo: res.deployments,
-          tags: res.tags
+          tags: res.tags,
         });
       }
     } catch (error) {
@@ -137,8 +137,8 @@ class DeployPage extends React.Component {
   render() {
     const {
       match: {
-        params: { code }
-      }
+        params: { code },
+      },
     } = this.props;
     const {
       error,
@@ -147,7 +147,7 @@ class DeployPage extends React.Component {
       commits,
       tags,
       owner,
-      repo
+      repo,
     } = this.state;
 
     document.title = `What's Deployed on ${owner}/${repo}?`;
@@ -219,19 +219,19 @@ class DeployTable extends React.Component {
     tags: PropTypes.object.isRequired,
     code: PropTypes.string.isRequired,
     owner: PropTypes.string.isRequired,
-    repo: PropTypes.string.isRequired
+    repo: PropTypes.string.isRequired,
   };
   static prefBorsModeCacheKey = 'pref-bors-mode';
 
   state = {
-    borsMode: false
+    borsMode: false,
   };
 
   componentDidMount() {
     this._restoreBorsModeChoice();
   }
 
-  handleBorsCheckbox = ev => {
+  handleBorsCheckbox = (ev) => {
     this.setState({ borsMode: ev.target.checked }, this._persistBorsModeChoice);
   };
 
@@ -282,7 +282,7 @@ class DeployTable extends React.Component {
       for (const deploy of deployInfo) {
         if (commit.sha === deploy.sha) {
           foundDeploy[deploy.name] = true;
-          if (Array.from(Object.values(foundDeploy)).every(f => f)) {
+          if (Array.from(Object.values(foundDeploy)).every((f) => f)) {
             foundMatch = true;
           }
         }
@@ -308,7 +308,7 @@ class DeployTable extends React.Component {
             owner={owner}
             repo={repo}
           />
-          {deployInfo.map(deploy => (
+          {deployInfo.map((deploy) => (
             <td
               className={classNames({ checked: foundDeploy[deploy.name] })}
               key={`${commit.sha}:${deploy.name}`}
@@ -341,7 +341,7 @@ class DeployTable extends React.Component {
                   </span>
                 )}
               </th>
-              {deployInfo.map(deployment => (
+              {deployInfo.map((deployment) => (
                 <th key={`${deployment.name}-col`}>{deployment.name}</th>
               ))}
             </tr>
@@ -382,12 +382,12 @@ class CommitDetails extends React.Component {
     author: PropTypes.shape({
       login: PropTypes.string.isRequired,
       avatar_url: PropTypes.string.isRequired,
-      html_url: PropTypes.string.isRequired
+      html_url: PropTypes.string.isRequired,
     }),
     html_url: PropTypes.string.isRequired,
     owner: PropTypes.string.isRequired,
     repo: PropTypes.string.isRequired,
-    tag: PropTypes.any
+    tag: PropTypes.any,
   };
 
   parseBorsMessage(commit) {
@@ -409,12 +409,12 @@ class CommitDetails extends React.Component {
     const { users } = this.props;
     let headers = commit.message
       .split(/\n\n/g)
-      .filter(paragraph => /^\d+: /.test(paragraph));
+      .filter((paragraph) => /^\d+: /.test(paragraph));
 
     return {
       description: headers.join('; '),
       authors: headers
-        .map(header => {
+        .map((header) => {
           const match = header.match(/a=([^ ]*)+/);
           if (match) {
             let [, author] = match;
@@ -427,7 +427,7 @@ class CommitDetails extends React.Component {
           }
           return null;
         })
-        .filter(login => login)
+        .filter((login) => login),
     };
   }
 
@@ -444,7 +444,10 @@ class CommitDetails extends React.Component {
       const { description, authors } = this.parseBorsMessage(commit);
       title = description;
       for (const author of authors) {
-        if (author && !involvedUsers.map(u => u.login).includes(author.login)) {
+        if (
+          author &&
+          !involvedUsers.map((u) => u.login).includes(author.login)
+        ) {
           involvedUsers.unshift(author);
         }
       }
@@ -480,7 +483,7 @@ class CommitDetails extends React.Component {
 function UserAvatars({ users }) {
   return (
     <div className="user-avatar-group">
-      {users.map(user => {
+      {users.map((user) => {
         if (!user) {
           return (
             <span className="user-avatar unknown-user" title="Unknown User" />
@@ -510,7 +513,7 @@ class RepoSummary extends React.Component {
     ).isRequired,
     owner: PropTypes.string.isRequired,
     repo: PropTypes.string.isRequired,
-    tags: PropTypes.object.isRequired
+    tags: PropTypes.object.isRequired,
   };
 
   render() {
@@ -529,13 +532,13 @@ class RepoSummary extends React.Component {
             <tr>
               <th>Revision URLs</th>
               <th>SHA</th>
-              {deployInfo.map(deployment => (
+              {deployInfo.map((deployment) => (
                 <td key={deployment.name}>{deployment.name}</td>
               ))}
             </tr>
           </thead>
           <tbody>
-            {deployInfo.map(deployment => (
+            {deployInfo.map((deployment) => (
               <tr key={deployment.name}>
                 <td>
                   <a
@@ -554,7 +557,7 @@ class RepoSummary extends React.Component {
                     tags={tags}
                   />
                 </td>
-                {deployInfo.map(otherDeployment => {
+                {deployInfo.map((otherDeployment) => {
                   if (otherDeployment.name === deployment.name) {
                     return <td key="same">-</td>;
                   } else {
@@ -606,7 +609,7 @@ class Culprits extends React.PureComponent {
   state = {
     loading: true,
     culprits: null,
-    error: null
+    error: null,
   };
 
   componentDidMount() {
@@ -628,7 +631,7 @@ class Culprits extends React.PureComponent {
       const res = await ky
         .post('/culprits', {
           signal,
-          json: { owner, repo, deployments: deployInfo }
+          json: { owner, repo, deployments: deployInfo },
         })
         .json();
       if (this.dismounted) return;
@@ -655,7 +658,7 @@ class Culprits extends React.PureComponent {
         {loading && <EllipsisLoading text="loading culprits" />}
         {culprits && (
           <div className="culprits">
-            {culprits.map(group => (
+            {culprits.map((group) => (
               <div key={group.name} className="group">
                 <h4>
                   <span className="on-prefix">On</span> {group.name}
@@ -691,7 +694,7 @@ class Culprits extends React.PureComponent {
 class BadgesAndUrls extends React.Component {
   state = {
     showHelp: false,
-    textCopied: ''
+    textCopied: '',
   };
 
   componentWillUnmount() {
@@ -699,10 +702,10 @@ class BadgesAndUrls extends React.Component {
   }
 
   toggleHelp = () => {
-    this.setState(state => ({ showHelp: !state.showHelp }));
+    this.setState((state) => ({ showHelp: !state.showHelp }));
   };
 
-  copiedText = textCopied => {
+  copiedText = (textCopied) => {
     this.setState({ textCopied }, () => {
       window.setTimeout(() => {
         if (!this.dismounted) {
@@ -712,7 +715,7 @@ class BadgesAndUrls extends React.Component {
     });
   };
 
-  showCopyToClipboard = text => {
+  showCopyToClipboard = (text) => {
     return (
       <CopyToClipboard text={text} onCopy={() => this.copiedText(text)}>
         <small>
@@ -735,7 +738,9 @@ class BadgesAndUrls extends React.Component {
 
     const { protocol, host } = window.location;
     const fullUrl = `${protocol}//${host}${shortUrl}/${owner}/${repo}`;
-    const envs = deployInfo.map(deploy => deploy.name.toLowerCase()).join(',');
+    const envs = deployInfo
+      .map((deploy) => deploy.name.toLowerCase())
+      .join(',');
     const badgeUrl = `https://img.shields.io/badge/whatsdeployed-${envs}-green.svg`;
     const badgeAlt = `What's deployed on ${envs}?`;
     const markdown = `[![${badgeAlt}](${badgeUrl})](${fullUrl})`;

@@ -5,11 +5,11 @@ export class EllipsisLoading extends React.PureComponent {
   static defaultProps = {
     text: 'Loading',
     animationMs: 400,
-    maxDots: 5
+    maxDots: 5,
   };
   componentDidMount() {
     this.interval = window.setInterval(() => {
-      this.setState(state => {
+      this.setState((state) => {
         return { dots: (state.dots + 1) % this.props.maxDots };
       });
     }, this.props.animationMs);
