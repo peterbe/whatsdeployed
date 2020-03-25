@@ -3,7 +3,7 @@ import {
   Switch,
   Redirect,
   Route,
-  withRouter as originalWithRouter
+  withRouter as originalWithRouter,
 } from 'react-router-dom';
 
 import SetupPage from './SetupPage';
@@ -28,7 +28,7 @@ const Routes = withRouter(({ location }) => {
 export default Routes;
 
 export function withRouter(Component) {
-  return originalWithRouter(props => {
+  return originalWithRouter((props) => {
     props.location.searchParams = new URLSearchParams(props.location.search);
     return <Component {...props} />;
   });
