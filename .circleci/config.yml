@@ -30,9 +30,6 @@ jobs:
           name: Test
           command: yarn run test:ci
 
-      - run:
-          command: yarn audit
-
   lint:
     docker:
       # Image with python 3.6 and node 8
