@@ -23,7 +23,7 @@ console.log(
       name,
       version,
       commit,
-      date
+      date,
     },
     undefined,
     2
