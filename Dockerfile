@@ -21,7 +21,7 @@ COPY ./package.json /app/package.json
 COPY ./yarn.lock /app/yarn.lock
 
 RUN pip install -U 'pip>=8' && \
-    pip install --no-cache-dir -r requirements.txt && \
+    pip install --no-cache-dir -r requirements.txt --progress-bar off && \
     yarn install --non-interactive --prod
 
 # Install the app

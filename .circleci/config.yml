@@ -52,11 +52,11 @@ jobs:
 
       - run:
           name: Install latest pip
-          command: pip install -U pip
+          command: pip install -U pip --progress-bar off
 
       - run:
           name: Install dev tools
-          command: pip install -r dev-requirements.txt
+          command: pip install -r dev-requirements.txt --progress-bar off
 
       - save_cache:
           paths:
