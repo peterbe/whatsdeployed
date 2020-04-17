@@ -51,6 +51,10 @@ jobs:
             echo "source ~/venv/bin/activate" >> $BASH_ENV
 
       - run:
+          name: Install latest pip
+          command: pip install -U pip
+
+      - run:
           name: Install dev tools
           command: pip install -r dev-requirements.txt
 
