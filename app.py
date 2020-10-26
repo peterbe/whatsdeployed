@@ -2,10 +2,9 @@
 import json
 import time
 import os
-import cgi
 import random
 import warnings
-from urllib.parse import urlparse, urlencode
+from urllib.parse import parse_qs, urlparse, urlencode
 from collections import defaultdict
 
 import requests
@@ -271,8 +270,7 @@ class CulpritsView(MethodView):
 class ShortenView(MethodView):
     def post(self):
         url = request.json["url"]
-        qs = urlparse(url).query
-        parsed = cgi.parse_qs(qs)
+        parsed = parse_qs(urlparse(url).query)
         owner = parsed["owner"][0]
         repo = parsed["repo"][0]
         revisions = []
