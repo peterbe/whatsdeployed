@@ -23,6 +23,7 @@ from flask import (
 from flask.views import MethodView
 from flask_sqlalchemy import SQLAlchemy
 from decouple import config
+import rollbar
 
 
 DEBUG = config("DEBUG", default=False)
@@ -37,6 +38,14 @@ if GITHUB_AUTH_TOKEN:
     GITHUB_REQUEST_HEADERS["Authorization"] = "token {}".format(GITHUB_AUTH_TOKEN)
 else:
     warnings.warn("GITHUB_AUTH_TOKEN is NOT available. Worry about rate limits.")
+
+ROLLBAR_ACCESS_TOKEN = config("ROLLBAR_ACCESS_TOKEN", default=None)
+if ROLLBAR_ACCESS_TOKEN:
+    rollbar.init(ROLLBAR_ACCESS_TOKEN)
+    rollbar.report_message("Rollbar is configured correctly")
+    print("Rollbar enabled.")
+else:
+    print("Rollbar NOT enabled.")
 
 # Set static_folder=None to suppress the standard static server
 app = Flask(__name__, static_folder=None)
