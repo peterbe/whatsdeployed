@@ -56,7 +56,14 @@ jobs:
 
       - run:
           name: Install dev tools
-          command: pip install -r dev-requirements.txt --progress-bar off
+          # command: pip install -r dev-requirements.txt --progress-bar off
+          # As of the new pip (2020 resolver) you can't have hashes in your
+          # contraints file anymore. :(
+          # See https://github.com/pypa/pip/issues/9020
+          # Use this hack to pretend they're all primary requirements files
+          # until either pip improves, switch to pip-tools, or upgrade to poetry.
+          # Note! poetry would probably be best but how good is Dependabot support?
+          command: pip install -r dev-requirements.txt -r requirements-constraints.txt -r requirements.txt --progress-bar off
 
       - save_cache:
           paths:
