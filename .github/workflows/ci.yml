@@ -1,0 +1,57 @@
+name: CI Django and Node
+
+on:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2.1.5
+        with:
+          node-version: '12'
+
+      - name: Cache node_modules
+        uses: actions/cache@v2.1.4
+        id: cached-node_modules
+        with:
+          path: |
+            node_modules
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+
+      - name: Install all yarn packages
+        if: steps.cached-node_modules.outputs.cache-hit != 'true'
+        run: |
+          yarn --frozen-lockfile
+
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+
+      - name: Cache pip
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}-${{ hashFiles('requirements-constraints.txt') }}-${{ hashFiles('dev-requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install Dependencies
+        run: |
+          pip install -U pip wheel --progress-bar off
+          # pip install -r requirements.txt
+          # Have to do this because of a bug in the new pip resolver (grr!!)
+          pip install -r dev-requirements.txt -r requirements-constraints.txt -r requirements.txt --progress-bar off
+
+      - name: Run lints
+        run: |
+          therapist run --use-tracked-files
+
+      - name: Build client
+        run: |
+          yarn run build
