@@ -42,8 +42,8 @@ requests[security]==2.23.0 \
     --hash=sha256:b3f43d496c6daba4493e7c431722aeb7dbc6288f52a6e04e7b6023b0247817e6
 python-decouple==3.3 \
     --hash=sha256:55c546b85b0c47a15a47a4312d451a437f7344a9be3e001660bccd93b637de95
-python-dotenv==0.12.0 \
-    --hash=sha256:81822227f771e0cab235a2939f0f265954ac4763cafd806d845801c863bf372f \
-    --hash=sha256:92b3123fb2d58a284f76cc92bfe4ee6c502c32ded73e8b051c4f6afc8b6751ed
+python-dotenv==0.16.0 \
+    --hash=sha256:31d752f5b748f4e292448c9a0cac6a08ed5e6f4cefab85044462dcad56905cec \
+    --hash=sha256:9fa413c37d4652d3fa02fea0ff465c384f5db75eab259c4fc5d0c5b8bf20edd4
 rollbar==0.15.2 \
     --hash=sha256:5e80fe7c9b15e84f5b72e45ebaa85bba1c13234e447a5f3801d094eb379c2d0e
