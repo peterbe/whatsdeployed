@@ -45,5 +45,5 @@ python-decouple==3.3 \
 python-dotenv==0.12.0 \
     --hash=sha256:81822227f771e0cab235a2939f0f265954ac4763cafd806d845801c863bf372f \
     --hash=sha256:92b3123fb2d58a284f76cc92bfe4ee6c502c32ded73e8b051c4f6afc8b6751ed
-rollbar==0.15.1 \
-    --hash=sha256:96b63df27a47232aa16a142d2f5812073f8bf7db2b81c5f7981b9a4d4659468c
+rollbar==0.15.2 \
+    --hash=sha256:5e80fe7c9b15e84f5b72e45ebaa85bba1c13234e447a5f3801d094eb379c2d0e
