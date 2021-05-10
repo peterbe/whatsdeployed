@@ -50,7 +50,9 @@ jobs:
 
       - name: Run lints
         run: |
-          therapist run --use-tracked-files
+          black --check app.py
+          flake8 app.py
+          prettier --check src
 
       - name: Build client
         run: |
