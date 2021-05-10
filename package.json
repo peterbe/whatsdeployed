@@ -36,7 +36,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "test:ci": "CI=true yarn test"
+    "test:ci": "CI=true yarn test",
+    "prettier:check": "prettier --check src",
+    "prettier:format": "prettier --write src"
   },
   "proxy": "http://localhost:5000",
   "eslintConfig": {
