@@ -52,7 +52,7 @@ jobs:
         run: |
           black --check app.py
           flake8 app.py
-          prettier --check src
+          yarn prettier:check
 
       - name: Build client
         run: |
