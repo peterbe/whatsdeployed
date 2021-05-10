@@ -140,15 +140,8 @@ class DeployPage extends React.Component {
         params: { code },
       },
     } = this.props;
-    const {
-      error,
-      loading,
-      deployInfo,
-      commits,
-      tags,
-      owner,
-      repo,
-    } = this.state;
+    const { error, loading, deployInfo, commits, tags, owner, repo } =
+      this.state;
 
     document.title = `What's Deployed on ${owner}/${repo}?`;
 
