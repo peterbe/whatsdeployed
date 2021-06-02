@@ -37,19 +37,18 @@ jobs:
         uses: actions/cache@v2.1.6
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}-${{ hashFiles('requirements-constraints.txt') }}-${{ hashFiles('dev-requirements.txt') }}
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}-${{ hashFiles('dev-requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
 
       - name: Install Dependencies
         run: |
           pip install -U pip wheel --progress-bar off
-          # pip install -r requirements.txt
-          # Have to do this because of a bug in the new pip resolver (grr!!)
-          pip install -r dev-requirements.txt -r requirements-constraints.txt -r requirements.txt --progress-bar off
+          pip install -r requirements.txt --progress-bar off
 
       - name: Run lints
         run: |
+          pip install -r dev-requirements.txt --progress-bar off
           black --check app.py
           flake8 app.py
           yarn prettier:check
