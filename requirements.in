@@ -1,4 +1,4 @@
-Flask==2.0.0
+Flask==2.0.1
 psycopg2-binary==2.8.6
 Flask-SQLAlchemy==2.5.1
 requests[security]==2.25.1
