@@ -251,8 +251,8 @@ requests[security]==2.25.1 \
     # via
     #   -r requirements.in
     #   rollbar
-rollbar==0.15.2 \
-    --hash=sha256:5e80fe7c9b15e84f5b72e45ebaa85bba1c13234e447a5f3801d094eb379c2d0e
+rollbar==0.16.1 \
+    --hash=sha256:edaa0f36c7f5f10e8205de49f71c0c335b95eb6448fbf2cd3ebe9cc8b3092c66
     # via -r requirements.in
 six==1.16.0 \
     --hash=sha256:1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926 \
