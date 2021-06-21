@@ -241,9 +241,9 @@ python-decouple==3.4 \
     --hash=sha256:2e5adb0263a4f963b58d7407c4760a2465d464ee212d733e2a2c179e54c08d8f \
     --hash=sha256:a8268466e6389a639a20deab9d880faee186eb1eb6a05e54375bdf158d691981
     # via -r requirements.in
-python-dotenv==0.17.1 \
-    --hash=sha256:00aa34e92d992e9f8383730816359647f358f4a3be1ba45e5a5cefd27ee91544 \
-    --hash=sha256:b1ae5e9643d5ed987fc57cc2583021e38db531946518130777734f9589b3141f
+python-dotenv==0.18.0 \
+    --hash=sha256:dd8fe852847f4fbfadabf6183ddd4c824a9651f02d51714fa075c95561959c7d \
+    --hash=sha256:effaac3c1e58d89b3ccb4d04a40dc7ad6e0275fda25fd75ae9d323e2465e202d
     # via -r requirements.in
 requests[security]==2.25.1 \
     --hash=sha256:27973dd4a904a4f13b263a19c866c13b92a39ed1c964655f025f3f8d3d75b804 \
