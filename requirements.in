@@ -1,7 +1,7 @@
 Flask==2.0.1
 psycopg2-binary==2.9.1
 Flask-SQLAlchemy==2.5.1
-requests[security]==2.25.1
+requests[security]==2.26.0
 python-decouple==3.4
 python-dotenv==0.18.0
 rollbar==0.16.1
