@@ -15,7 +15,7 @@
     "reactstrap": "8.10.0"
   },
   "devDependencies": {
-    "prettier": "2.4.0",
+    "prettier": "2.4.1",
     "source-map-explorer": "2.5.2"
   },
   "resolutions": {
