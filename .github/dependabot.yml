@@ -3,7 +3,7 @@ updates:
   - package-ecosystem: npm
     directory: '/'
     schedule:
-      interval: daily
+      interval: monthly
     open-pull-requests-limit: 10
     # This forces the Dependabot commit messages to conform to something
     # our auto-merge workflow can always cope with.
@@ -16,9 +16,9 @@ updates:
   - package-ecosystem: 'github-actions'
     directory: '/'
     schedule:
-      interval: 'weekly'
+      interval: monthly
 
   - package-ecosystem: 'pip'
     directory: '/'
     schedule:
-      interval: 'weekly'
+      interval: monthly
