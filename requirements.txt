@@ -170,8 +170,8 @@ requests[security]==2.26.0 \
     # via
     #   -r requirements.in
     #   rollbar
-rollbar==0.16.1 \
-    --hash=sha256:edaa0f36c7f5f10e8205de49f71c0c335b95eb6448fbf2cd3ebe9cc8b3092c66
+rollbar==0.16.2 \
+    --hash=sha256:aa3b570062dd8dfb0e11537ba858f9e1633a604680e062a525434b8245540f87
     # via -r requirements.in
 six==1.16.0 \
     --hash=sha256:1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926 \

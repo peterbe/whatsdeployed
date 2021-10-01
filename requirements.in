@@ -4,4 +4,4 @@ Flask-SQLAlchemy==2.5.1
 requests[security]==2.26.0
 python-decouple==3.4
 python-dotenv==0.19.0
-rollbar==0.16.1
+rollbar==0.16.2
