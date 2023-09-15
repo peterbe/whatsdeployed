@@ -17,7 +17,7 @@ class LongUrlRedirect extends React.Component {
       PropTypes.shape({
         url: PropTypes.string.isRequired,
         name: PropTypes.string.isRequired,
-      })
+      }),
     ),
   };
 

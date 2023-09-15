@@ -24,7 +24,7 @@ class Footer extends React.Component {
     if (document.querySelector('#_version')) {
       versionData = Object.assign(
         {},
-        document.querySelector('#_version').dataset
+        document.querySelector('#_version').dataset,
       );
     }
 
