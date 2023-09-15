@@ -2,7 +2,7 @@
 
 set -e
 
-find . | grep --color=never '\~$' | xargs rm -f
+fd -t f -I -H '\~$' | xargs rm -f
 
 INLINE_RUNTIME_CHUNK=false yarn run build
 

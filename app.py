@@ -401,20 +401,21 @@ class HealthCheckView(MethodView):
         # Can't really test anything because it might empty on first ever load.
         Shortlink.query.count()
 
-        # If you attempt to include Authorization headers, even on an endpoint
-        # that doesn't need it, it will 401 if the auth token is wrong.
-        response = requests.get(
-            "https://api.github.com/",
-            headers=GITHUB_REQUEST_HEADERS,
-            timeout=GITHUB_REQUEST_TIMEOUT,
-        )
-        response.raise_for_status()
+        # Commented out for now because it's doing this healthcheck too often.
+        # # If you attempt to include Authorization headers, even on an endpoint
+        # # that doesn't need it, it will 401 if the auth token is wrong.
+        # response = requests.get(
+        #     "https://api.github.com/",
+        #     headers=GITHUB_REQUEST_HEADERS,
+        #     timeout=GITHUB_REQUEST_TIMEOUT,
+        # )
+        # response.raise_for_status()
         return "OK\n"
 
 
 app.add_url_rule("/shas", view_func=ShasView.as_view("shas"))
 app.add_url_rule("/culprits", view_func=CulpritsView.as_view("culprits"))
-app.add_url_rule("/shortenit", view_func=ShortenView.as_view("shortenit"))
+app.add_url_rule("/shortenit", view_func=ShortenView.as_view("shortenit"))e it's
 app.add_url_rule(
     "/lengthenit/<string:link>", view_func=LengthenView.as_view("lengthenit")
 )
