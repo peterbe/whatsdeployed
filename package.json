@@ -15,13 +15,14 @@
     "reactstrap": "8.10.0"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "prettier": "3.0.3",
     "source-map-explorer": "2.5.3"
   },
   "scripts": {
     "analyze": "source-map-explorer build/static/js/main.*",
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "react-scripts --openssl-legacy-provider start",
+    "build": "react-scripts --openssl-legacy-provider build",
     "test": "react-scripts test",
     "test:ci": "CI=true yarn test",
     "prettier:check": "prettier --check src",
