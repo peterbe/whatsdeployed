@@ -15,26 +15,14 @@
     "reactstrap": "8.10.0"
   },
   "devDependencies": {
-    "prettier": "2.4.1",
-    "source-map-explorer": "2.5.2"
-  },
-  "resolutions": {
-    "braces": ">=2.3.1",
-    "handlebars": ">=4.5.3",
-    "js-yaml": ">=3.13.0",
-    "lodash": ">=4.17.21",
-    "mixin-deep": ">=1.3.2",
-    "set-value": ">=2.0.1",
-    "eslint-utils": ">=1.4.1",
-    "serialize-javascript": ">=2.1.1",
-    "kind-of": ">=6.0.3",
-    "acorn": ">=5.7.4",
-    "minimist": ">=1.2.3"
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "prettier": "3.0.3",
+    "source-map-explorer": "2.5.3"
   },
   "scripts": {
     "analyze": "source-map-explorer build/static/js/main.*",
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "react-scripts --openssl-legacy-provider start",
+    "build": "react-scripts --openssl-legacy-provider build",
     "test": "react-scripts test",
     "test:ci": "CI=true yarn test",
     "prettier:check": "prettier --check src",

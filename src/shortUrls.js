@@ -33,7 +33,7 @@ const shortUrls = {
         } catch (err) {
           console.error(
             'Error loading cached shortUrls from localStorage:',
-            err
+            err,
           );
           localStorage.removeItem('shortUrls');
           history = [];

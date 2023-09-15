@@ -15,7 +15,7 @@ const BORS_LOGIN = 'bors[bot]';
 
 function makeTagAbsoluteUrl(owner, repo, tag) {
   return `https://github.com/${owner}/${repo}/releases/tag/${encodeURIComponent(
-    tag
+    tag,
   )}`;
 }
 
@@ -206,7 +206,7 @@ export default withRouter(DeployPage);
 class DeployTable extends React.Component {
   static propTypes = {
     deployInfo: PropTypes.arrayOf(
-      PropTypes.shape({ name: PropTypes.string.isRequired })
+      PropTypes.shape({ name: PropTypes.string.isRequired }),
     ).isRequired,
     commits: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
     tags: PropTypes.object.isRequired,
@@ -230,7 +230,7 @@ class DeployTable extends React.Component {
 
   _restoreBorsModeChoice = () => {
     const prefs = JSON.parse(
-      localStorage.getItem(this.prefBorsModeCacheKey) || '{}'
+      localStorage.getItem(this.prefBorsModeCacheKey) || '{}',
     );
     if (
       this.props.code in prefs &&
@@ -242,7 +242,7 @@ class DeployTable extends React.Component {
 
   _persistBorsModeChoice = () => {
     const prefs = JSON.parse(
-      localStorage.getItem(this.prefBorsModeCacheKey) || '{}'
+      localStorage.getItem(this.prefBorsModeCacheKey) || '{}',
     );
     prefs[this.props.code] = this.state.borsMode;
     localStorage.setItem(this.prefBorsModeCacheKey, JSON.stringify(prefs));
@@ -307,7 +307,7 @@ class DeployTable extends React.Component {
               key={`${commit.sha}:${deploy.name}`}
             />
           ))}
-        </tr>
+        </tr>,
       );
 
       if (foundMatch) {
@@ -502,7 +502,7 @@ function UserAvatars({ users }) {
 class RepoSummary extends React.Component {
   static propTypes = {
     deployInfo: PropTypes.arrayOf(
-      PropTypes.shape({ name: PropTypes.string.isRequired })
+      PropTypes.shape({ name: PropTypes.string.isRequired }),
     ).isRequired,
     owner: PropTypes.string.isRequired,
     repo: PropTypes.string.isRequired,
