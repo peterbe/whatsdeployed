@@ -415,7 +415,7 @@ class HealthCheckView(MethodView):
 
 app.add_url_rule("/shas", view_func=ShasView.as_view("shas"))
 app.add_url_rule("/culprits", view_func=CulpritsView.as_view("culprits"))
-app.add_url_rule("/shortenit", view_func=ShortenView.as_view("shortenit"))e it's
+app.add_url_rule("/shortenit", view_func=ShortenView.as_view("shortenit"))
 app.add_url_rule(
     "/lengthenit/<string:link>", view_func=LengthenView.as_view("lengthenit")
 )
