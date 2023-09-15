@@ -19,7 +19,6 @@ def _check_output(*args, **kwargs):
 
 
 def run(*args):
-
     last_tag = _check_output(
         [
             "git",
@@ -83,6 +82,7 @@ def run(*args):
     name = tag_name  # for now
     name = f"Static builds for {tag_name}"
 
+    assert GITHUB_AUTH_TOKEN
     headers = {"Authorization": f"token {GITHUB_AUTH_TOKEN}"}
 
     response = requests.get(URL, headers=headers)
