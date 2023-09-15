@@ -11,9 +11,9 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Setup Node.js environment
-        uses: actions/setup-node@v2.4.0
+        uses: actions/setup-node@v3
         with:
-          node-version: '12'
+          node-version: '18'
 
       - name: Cache node_modules
         uses: actions/cache@v2.1.6
@@ -48,7 +48,6 @@ jobs:
 
       - name: Run lints
         run: |
-          pip install -r dev-requirements.txt --progress-bar off
           black --check app.py
           flake8 app.py
           yarn prettier:check
