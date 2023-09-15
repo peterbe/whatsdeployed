@@ -8,5 +8,5 @@ python-dotenv==1.0.0
 rollbar==0.16.3
 
 black==23.9.1
-flake8==6.1.0
+flake8==5.0.4
 pip-tools==7.3.0
