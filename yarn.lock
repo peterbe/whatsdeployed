@@ -9512,10 +9512,10 @@ react-scripts@4.0.3:
   optionalDependencies:
     fsevents "^2.1.3"
 
-react-timeago@6.1.1:
-  version "6.1.1"
-  resolved "https://registry.yarnpkg.com/react-timeago/-/react-timeago-6.1.1.tgz#d9365c042428eceb90c4a689248d55b37a1bd6be"
-  integrity sha512-44zsWw2J/4AiZ/eVviygDthcDvCSuVyR/PLVF/g7OIUGq8rnEOwa3A+pHPmHt9WJ5fhHumwTY+Go+RkzEaIHvQ==
+react-timeago@7.2.0:
+  version "7.2.0"
+  resolved "https://registry.yarnpkg.com/react-timeago/-/react-timeago-7.2.0.tgz#ae929d7423a63cbc3dc228e49d22fbf586d459ca"
+  integrity sha512-2KsBEEs+qRhKx/kekUVNSTIpop3Jwd7SRBm0R4Eiq3mPeswRGSsftY9FpKsE/lXLdURyQFiHeHFrIUxLYskG5g==
 
 react-transition-group@^2.3.1:
   version "2.9.0"
