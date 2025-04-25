@@ -321,7 +321,7 @@ class DeployTable extends React.Component {
           <thead>
             <tr>
               <th>
-                <span className="column-title">Commits on master</span>
+                <span className="column-title">Commits on GitHub</span>
                 {hasBors && (
                   <span className="column-extra">
                     There are commits here by <code>{BORS_LOGIN}</code>.{' '}
@@ -733,8 +733,8 @@ class BadgesAndUrls extends React.Component {
     const fullUrl = `${protocol}//${host}${shortUrl}/${owner}/${repo}`;
     const envs = deployInfo
       .map((deploy) => deploy.name.toLowerCase())
-      .join(',');
-    const badgeUrl = `https://img.shields.io/badge/whatsdeployed-${envs}-green.svg`;
+      .join('/');
+    const badgeUrl = `https://img.shields.io/badge/whatsdeployed-${envs}-teal.svg`;
     const badgeAlt = `What's deployed on ${envs}?`;
     const markdown = `[![${badgeAlt}](${badgeUrl})](${fullUrl})`;
     const restructuredText = `.. |whatsdeployed| image:: ${badgeUrl}\n    :target: ${fullUrl}`;
