@@ -223,8 +223,8 @@ class WhatIsIt extends React.Component {
           {`$ curl https://dev.example.com/deployed-version\n{"commit": "d16cc25d58252a2b7e6bb394cbefa76b147d64d3", "other": "stuff"}`}
         </pre>
         <p>
-          Once you've typed in the GitHub organization, GitHub repository and at
-          least one of these URLs you can generated a table that shows what's
+          Once you've typed in the GitHub organization, GitHub repository, and
+          at least one of these URLs, you can generate a table that shows what's
           been deployed on the server(s) compared to what's available in the{' '}
           default branch.
         </p>
