@@ -355,7 +355,8 @@ class DeployTable extends React.Component {
           ) : (
             <div className="alert alert-warning" role="alert">
               Even after comparing the last {commits.length} commits, a common
-              denominator could not be found! The difference is just too big.
+              denominator could not be found! The difference is just too big,
+              or the deployment SHA does not come from the default branch.
               <br />
               Use the links below to compare directly on GitHub.
             </div>
