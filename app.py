@@ -151,7 +151,7 @@ class ShasView(MethodView):
             sha = extract_sha(content)
             if not sha:
                 # doesn't appear to be a git sha
-                error = "Doesn't look like a sha\n (%s) on %s" % (content, each["url"])
+                error = "Doesn't look like a sha:\n (“%s”)\n — on: %s" % (content, each["url"])
                 return make_response(jsonify({"error": error}))
 
             deployments.append({"name": name, "sha": sha, "bugs": [], "url": url})

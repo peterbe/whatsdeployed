@@ -82,7 +82,11 @@ class DeployPage extends React.Component {
     this.startLoad('shas');
     try {
       const res = await ky
-        .post('/shas', { json: { owner, repo, deployments } })
+        .post('/shas', {
+          json: { owner, repo, deployments },
+          retries: 3,
+          timeout: 30000,
+        })
         .json();
 
       if (res.error) {
@@ -94,7 +98,7 @@ class DeployPage extends React.Component {
         });
       }
     } catch (error) {
-      console.warn('Error fetching shas!');
+      console.warn('Error fetching deployment /shas or tags!');
       console.error(error);
       this.setState({ error });
     } finally {
@@ -175,7 +179,7 @@ class DeployPage extends React.Component {
           </>
         ) : !deployInfo ? (
           <div className="alert alert-danger">
-            No Deployment info could be found
+            Deployment info could not be retrieved
           </div>
         ) : (
           <>
@@ -351,7 +355,8 @@ class DeployTable extends React.Component {
           ) : (
             <div className="alert alert-warning" role="alert">
               Even after comparing the last {commits.length} commits, a common
-              denominator could not be found! The difference is just too big.
+              denominator could not be found! The difference is just too big,
+              or the deployment SHA does not come from the default branch.
               <br />
               Use the links below to compare directly on GitHub.
             </div>
