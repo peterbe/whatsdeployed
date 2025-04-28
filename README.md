@@ -17,7 +17,7 @@ references which git sha has been deployed.
 
 ## License
 
-[MPL 2.0](http://www.mozilla.org/MPL/2.0/)
+[MPL 2.0](https://www.mozilla.org/MPL/2.0/)
 
 ## Credits
 
@@ -33,7 +33,6 @@ To install dependencies:
 
 ```
 pip install -r requirements.txt
-pip install -r dev-requirements.txt
 yarn install
 ```
 
