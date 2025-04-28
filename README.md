@@ -2,8 +2,10 @@
 
 What's deployed from a GitHub repo on various server environments?
 
-This requires that you have 2 or more URLs that return a git sha that
-references which git sha has been deployed.
+This requires that you have a URL returning the git SHA of a commit
+currently deployed in the environment. If this commit is present in your
+default branch and the repository is public, you will get a shortlink showing
+the state of individual deployments in relation to your commit history.
 
 ## Screenshots
 
@@ -51,9 +53,9 @@ yarn start
 
 This will automatically open your browser to http://localhost:3000/
 
-To avoid hitting rate limits on GitHub's API you can go to
+To avoid hitting rate limits on GitHub's API, you should go to your
 [Personal access tokens](https://github.com/settings/tokens) and generate
-a token (without any scopes). How can you set:
+a token (without any scopes). Then add it to the command or set it e.g.:
 
 ```
 export GITHUB_AUTH_TOKEN=afefdf213840aeb8007310ab05fc33eda51a0652

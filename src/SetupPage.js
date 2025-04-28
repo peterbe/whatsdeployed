@@ -200,16 +200,16 @@ class WhatIsIt extends React.Component {
         <p>
           <b>
             It's a web service for visualizing the difference between code
-            committed to <code>master</code> in your GitHub project compared to
-            which code has been deployed in your dev, stage and/or production
-            environment(s).
+            committed to the <b>default branch</b> of your GitHub project
+            compared to which code has been deployed in your dev, stage and/or
+            production environment(s).
           </b>
         </p>
         <h4>The Basics</h4>
         <p>
           For this to work you need to have your code in a{' '}
           <b>public GitHub repository</b> and the git SHA that is deployed on
-          your server(s) need to be publicly available.
+          your server(s) has to be publicly available.
         </p>
         <p>
           The git SHA needs to be the content of the URL or it can be JSON that
@@ -223,20 +223,20 @@ class WhatIsIt extends React.Component {
           {`$ curl https://dev.example.com/deployed-version\n{"commit": "d16cc25d58252a2b7e6bb394cbefa76b147d64d3", "other": "stuff"}`}
         </pre>
         <p>
-          Once you've typed in the GitHub organization, GitHub repository and at
-          least one of these URLs you can generated a table that shows what's
+          Once you've typed in the GitHub organization, GitHub repository, and
+          at least one of these URLs, you can generate a table that shows what's
           been deployed on the server(s) compared to what's available in the{' '}
-          <code>master</code> branch.
+          default branch.
         </p>
         <h4>Examples</h4>
         <ul>
           <li>
             <a
-              href="https://whatsdeployed.io/s/5HY"
+              href="https://whatsdeployed.io/s/osf"
               target="_blank"
               rel="noopener noreferrer"
             >
-              mozilla-services/tecken
+              mozilla/pontoon
             </a>
           </li>
           <li>
@@ -250,7 +250,7 @@ class WhatIsIt extends React.Component {
           </li>
           <li>
             <a
-              href="https://whatsdeployed.io/s/pdF"
+              href="https://whatsdeployed.io/s/BIY"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -263,12 +263,12 @@ class WhatIsIt extends React.Component {
           This instance is public and free for anybody to use. The{' '}
           <a href="https://github.com/peterbe/whatsdeployed">source code</a> is
           open and available under the{' '}
-          <a href="http://www.mozilla.org/MPL/2.0/">MPL 2.0</a> license.
+          <a href="https://www.mozilla.org/MPL/2.0/">MPL 2.0</a> license.
         </p>
         <p>
-          It's just a <a href="http://flask.pocoo.org/">Flask</a> app and you
-          can install and run your own instance if you want to use this for your
-          private repositories.
+          It's just a <a href="https://flask.palletsprojects.com/">Flask</a> app
+          and you can install and run your own instance if you want to use this
+          for your private repositories.
         </p>
       </div>
     );
