@@ -1,57 +1,37 @@
-name: CI Django and Node
-
+name: CI
 on:
   pull_request:
-
+  push:
+    branches: [master]
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        include:
+          - node: 20
+            python: '3.9'
+          - node: 22
+            python: '3.10'
+    name: node:${{ matrix.node }} / python:${{ matrix.python }}
     steps:
       - uses: actions/checkout@v4
-
-      - name: Setup Node.js environment
-        uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: '18'
-
-      - name: Cache node_modules
-        uses: actions/cache@v3.3.2
-        id: cached-node_modules
+          node-version: ${{ matrix.node }}
+          cache: yarn
+      - name: yarn> Install node modules
+        run: yarn --frozen-lockfile
+      - uses: actions/setup-python@v5
         with:
-          path: |
-            node_modules
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-
-      - name: Install all yarn packages
-        if: steps.cached-node_modules.outputs.cache-hit != 'true'
-        run: |
-          yarn --frozen-lockfile
-
-      - name: Set up Python 3.8
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.8'
-
-      - name: Cache pip
-        uses: actions/cache@v3.3.2
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}-${{ hashFiles('dev-requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
-
-      - name: Install Dependencies
-        run: |
-          pip install -U pip wheel --progress-bar off
-          pip install -r requirements.txt --progress-bar off
-
-      - name: Run lints
+          python-version: ${{ matrix.python }}
+          cache: pip
+      - name: pip> Install dependencies
+        run: pip install -r requirements.txt
+      - name: Lint app & client
         run: |
           black --check app.py
           flake8 app.py
           yarn prettier:check
-
       - name: Build client
-        run: |
-          yarn run build
+        run: yarn run build
